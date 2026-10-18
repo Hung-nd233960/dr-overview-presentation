@@ -177,6 +177,7 @@ button kbd{color:var(--ink)}
 .cardcol{display:flex;flex-direction:column;align-items:center;gap:8px}
 #dosewarn{font-size:15px;font-weight:600;color:var(--amber);text-align:center;white-space:nowrap}
 .playbar{margin-top:8px}
+.trefoil{vertical-align:-5px;margin-right:6px;flex:none}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -252,7 +253,7 @@ button kbd{color:var(--ink)}
     <div id="coinbar"><span>Who picks first in round 1?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
     <div class="playbar">
     <div class="cardcol"><div id="cards"></div>
-    <div id="dosewarn">&#9888; Stronger multiplier = more added dose: each scan adds about 10 &times; its exposure (+3), and dose never goes down.</div></div>
+    <div id="dosewarn"><svg class="trefoil" viewBox="-50 -50 100 100" width="22" height="22" fill="currentColor" aria-hidden="true"><circle r="8"/><path d="M-23.00,-39.84 A46,46 0 0 1 23.00,-39.84 L6.50,-11.26 A13,13 0 0 0 -6.50,-11.26 Z"/><path d="M46.00,0.00 A46,46 0 0 1 23.00,39.84 L6.50,11.26 A13,13 0 0 0 13.00,0.00 Z"/><path d="M-23.00,39.84 A46,46 0 0 1 -46.00,0.00 L-13.00,0.00 A13,13 0 0 0 -6.50,11.26 Z"/></svg> Stronger multiplier = more added dose: each scan adds about 10 &times; its exposure (+3), and dose never goes down.</div></div>
     <div class="ctrls">
       <button id="standBtn" class="sec">STAND <kbd>S</kbd></button>
       <button class="sec" id="undo">Undo <kbd>U</kbd></button>
@@ -333,7 +334,7 @@ function playCard(ci){
   snap();const T=S.T[t];
   T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(SEEDg+S.round*10+(t==='L'?1:2));
   if(S.pos===0)S.usedCard=ci;
-  if(T.D>=E.LIMIT){T.stand=true;T.stopped=true;toast('\u26A0 Dose limit reached: '+(t==='L'?'Team Left':'Team Right')+' STANDS')}
+  if(T.D>=E.LIMIT){T.stand=true;T.stopped=true;toast('Dose limit reached: '+(t==='L'?'Team Left':'Team Right')+' STANDS',true)}
   S.pos++;advance();bjRender();
 }
 function doStand(){const t=curTeam();if(!t||paused)return;snap();S.T[t].stand=true;S.pos++;advance();bjRender()}
@@ -426,7 +427,8 @@ function clockDraw(){
   });
 }
 let toastT=null;
-function toast(msg){const e=$('#toast');e.textContent=msg;e.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>e.style.display='none',3500)}
+const TREFOIL='<svg class="trefoil" style="vertical-align:-4px;margin-right:8px" viewBox="-50 -50 100 100" width="22" height="22" fill="currentColor" aria-hidden="true"><circle r="8"/><path d="M-23.00,-39.84 A46,46 0 0 1 23.00,-39.84 L6.50,-11.26 A13,13 0 0 0 -6.50,-11.26 Z"/><path d="M46.00,0.00 A46,46 0 0 1 23.00,39.84 L6.50,11.26 A13,13 0 0 0 13.00,0.00 Z"/><path d="M-23.00,39.84 A46,46 0 0 1 -46.00,0.00 L-13.00,0.00 A13,13 0 0 0 -6.50,11.26 Z"/></svg>';
+function toast(msg,icon){const e=$('#toast');e.innerHTML=(icon?TREFOIL:'')+msg.replace(/&/g,'&amp;').replace(/</g,'&lt;');e.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>e.style.display='none',3500)}
 function togglePause(){
   if(!S.first||S.over)return;
   if(!paused){paused=true;pAt=Date.now();$('#pauseBtn').innerHTML='Resume <kbd>P</kbd>'}

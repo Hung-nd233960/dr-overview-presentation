@@ -51,7 +51,7 @@ A→B end of slide 3 · B→C end of slide 6 · C→D end of slide 10 · D→A e
 ## Activity dry-run (do twice, with a timer)
 
 1. **Warm-up** (1:00): C asks lowest, D reveals; C asks highest, D reveals; punchline.
-2. **Blackjack** (2:30): split room, Random picks the first team, 4 rounds ≈ 25 s each, Reveal, punchline. Practise the "stand" and the "undo" key. Expected best route: ×1.5 then ×6 (score 180.2); ×3 then ×3 scores 178.4.
+2. **Blackjack** (2:30): split room, Random picks the first team, 4 rounds ≈ 25 s each, Reveal, punchline. Practise the "stand" and the "undo" key. The start is random every game (0.08–0.16× of ideal), so there is no fixed best route; for a predictable rehearsal open `DR_Lab.html?tab=bj&r0=0.12` (best route ×1.5 then ×6 = 180.2; ×3 then ×3 = 178.4).
 3. Check the debrief on slide 12 follows within 10 s.
 
 ## Backup plan

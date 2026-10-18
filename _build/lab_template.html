@@ -213,7 +213,7 @@ button kbd{color:var(--ink)}
     <div class="goal">Make your image match the <b style="color:var(--amber)">IDEAL</b> as closely as you can, using as <b>little dose</b> as possible.</div>
     <div class="rgrid">
       <div>
-        <div class="rule"><b class="n">1</b><span>Both teams start from the <b>same grainy image</b>. The ideal image stays on screen.</span></div>
+        <div class="rule"><b class="n">1</b><span>Both teams start from the <b>same grainy image</b>. The ideal image stays on screen. The start is <b>different every game</b>.</span></div>
         <div class="rule"><b class="n">2</b><span>Each round your team plays <b>one multiplier card</b>. It multiplies the exposure of your <b>last scan</b>, so cards <b>chain</b>: new image, more dose. Both teams see every image.</span></div>
         <div class="rule"><b class="n">3</b><span><b>No copying:</b> the card the first team plays is blocked for the second team that round. The first pick alternates.</span></div>
         <div class="rule"><b class="n">4</b><span>Up to <b>4 rounds</b>. Say <b>STAND</b> when you think you are close enough. The other team <b>keeps playing</b> its remaining rounds, so standing early gains nothing.</span></div>
@@ -300,11 +300,15 @@ $('#wLow').onclick=wLow;$('#wAll').onclick=wAll;$('#wReset').onclick=wReset;
 // BLACKJACK
 const E=Engine;
 let S=null,stack=[];
+// random start per game (same for both teams): 0.08-0.16x of the ideal exposure, fresh noise pattern.
+// ?r0=0.12 fixes it for rehearsal/testing.
+let R0g=E.R0,SEEDg=7;
+function randStart(){const q=new URLSearchParams(location.search);const f=parseFloat(q.get('r0'));R0g=f>0?f:Math.round((0.08+Math.random()*0.08)*1000)/1000;SEEDg=Math.floor(Math.random()*900000)+100;}
 function newState(){return{round:1,first:null,order:null,pos:0,usedCard:null,over:false,
-  T:{L:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],cards:['start'],seeds:[7],stand:false,stopped:false},R:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],cards:['start'],seeds:[7],stand:false,stopped:false}}}}
+  T:{L:{r:R0g,D:E.doseOf(R0g),hist:[R0g],cards:['start'],seeds:[SEEDg],stand:false,stopped:false},R:{r:R0g,D:E.doseOf(R0g),hist:[R0g],cards:['start'],seeds:[SEEDg],stand:false,stopped:false}}}}
 function snap(){stack.push(JSON.stringify(S))}
 function hideReveal(){$('#revealbox').style.display='none';if(typeof rulesOn==='undefined'||!rulesOn)$('#bjGame').style.display='block'}
-function bjNew(){S=newState();stack=[];clocksReset();hideReveal();bjRender()}
+function bjNew(){randStart();S=newState();stack=[];clocksReset();hideReveal();bjRender()}
 function active(t){return !S.T[t].stand&&!S.T[t].stopped}
 function curTeam(){if(S.over||!S.first)return null;return S.order[S.pos]}
 function advance(){
@@ -322,7 +326,7 @@ function playCard(ci){
   const t=curTeam();if(!t||paused)return;
   if(S.pos===1&&S.usedCard===ci)return; // no copying
   snap();const T=S.T[t];
-  T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(S.round*10+(t==='L'?1:2));
+  T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(SEEDg+S.round*10+(t==='L'?1:2));
   if(S.pos===0)S.usedCard=ci;
   if(T.D>=E.LIMIT)T.stopped=true;
   S.pos++;advance();bjRender();

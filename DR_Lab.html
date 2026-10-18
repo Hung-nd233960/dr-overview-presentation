@@ -112,6 +112,20 @@ button kbd{color:var(--ink)}
 .team.spin{border-color:var(--amber);background:#1d3556;box-shadow:0 0 0 5px rgba(242,177,52,.35)}
 .team.win{border-color:var(--green);box-shadow:0 0 0 6px rgba(63,191,107,.4)}
 #reveal:disabled{opacity:.5}
+
+/* playing-card styled multipliers + control cluster */
+.statusbar{margin-bottom:6px}
+#cardnote{text-align:center;font-size:17px;color:var(--mute);margin:0 0 12px}
+.playbar{display:flex;gap:30px;justify-content:center;align-items:center;margin-top:12px}
+#cards{display:flex;gap:10px;margin:0}
+.card{position:relative;display:flex;align-items:center;justify-content:center;width:82px;height:116px;padding:0;border-radius:12px;background:#fbfcfe;color:#12304a;border:2px solid #cfd9e6;font-size:36px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:transform .12s,box-shadow .12s}
+.card::before,.card::after{content:attr(data-l);position:absolute;font-size:15px;font-weight:800;line-height:1}
+.card::before{top:7px;left:8px}
+.card::after{bottom:7px;right:8px;transform:rotate(180deg)}
+.card:hover:not(.used){transform:translateY(-6px);box-shadow:0 10px 20px rgba(0,0,0,.5);border-color:var(--teal)}
+.card.used{background:#3a4658;color:#6c7a90;border-color:#3a4658;text-decoration:line-through;cursor:not-allowed;box-shadow:none}
+.ctrls{display:grid;grid-template-columns:repeat(3,auto);gap:8px}
+.ctrls button{font-size:17px;padding:8px 14px;white-space:nowrap}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -170,27 +184,29 @@ button kbd{color:var(--ink)}
   </div>
   <div id="bjGame" style="display:none">
     <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div><span class="clock" id="tClock"><small>TURN</small>30</span><span class="clock" id="gClock"><small>GAME</small>3:00</span></div><div id="toast"></div>
+    <div id="cardnote">Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;3 = &times;18 of the start)</div>
     <div class="grid3">
-      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:196px;height:196px"></canvas>
+      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:172px;height:172px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
-      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:196px;height:196px"></canvas>
+      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:172px;height:172px"></canvas>
         <div class="roundbig">Where both teams began</div></div>
-      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:196px;height:196px"></canvas>
+      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:172px;height:172px"></canvas>
         <div class="roundbig" id="roundInfo">Match this image with as little dose as possible</div></div>
-      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:196px;height:196px"></canvas>
+      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:172px;height:172px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>
     <div id="coinbar"><span>Who picks first in round 1?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
-    <div id="cardnote">Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;3 = &times;18 of the start)</div>
+    <div class="playbar">
     <div id="cards"></div>
-    <div class="btns">
+    <div class="ctrls">
       <button id="standBtn" class="sec">STAND <kbd>S</kbd></button>
       <button class="sec" id="undo">Undo <kbd>U</kbd></button>
       <button id="reveal">Reveal <kbd>V</kbd></button>
       <button class="sec" id="pauseBtn">Pause <kbd>P</kbd></button><button class="sec" id="rulesBtn">Rules</button>
       <button class="sec" id="newgame">New game <kbd>N</kbd></button>
+    </div>
     </div>
   </div>
   <div id="revealbox"></div>
@@ -377,7 +393,7 @@ function bjRender(){
   $('#roundPill').textContent=S.over?'Game over':'Round '+Math.min(S.round,4)+' / 4';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this image with as little dose as possible':'Match this image with as little dose as possible');
   ['L','R'].forEach(x=>{if(S.T[x].stopped&&!S.T[x].stand&&!S.over){}});
   const cards=$('#cards');cards.innerHTML='';
-  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||(S.pos===1&&S.usedCard===i))?' used':'');b.textContent=l;b.onclick=()=>playCard(i);cards.appendChild(b)});
+  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||(S.pos===1&&S.usedCard===i))?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
   $('#standBtn').disabled=!t;$('#coinbar').style.display=S.first?'none':'flex';
   $('#reveal').disabled=!S.over;$('#reveal').classList.toggle('ready',S.over);clockSync();
 }

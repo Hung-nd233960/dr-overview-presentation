@@ -250,10 +250,9 @@ button kbd{color:var(--ink)}
 .rvteam .im .l2{font-size:12px;color:var(--mute);white-space:nowrap}
 .punch{font-size:24px;margin-top:12px}
 .row2{min-height:70px}
-#cdOverlay{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(8,14,26,.82);z-index:20}
-.cdnum{font-size:240px;font-weight:800;line-height:1;color:var(--ink);animation:cdpop 1s ease-out infinite}
-.cdwho{font-size:38px;font-weight:800;letter-spacing:2px;margin-bottom:6px}
-@keyframes cdpop{0%{transform:scale(1.5);opacity:.2}30%{transform:scale(1);opacity:1}100%{transform:scale(.9);opacity:.9}}
+#sideBox.starting .sidesec{font-size:44px;padding-bottom:6px;color:var(--ink)}
+#sideBox.starting small{color:var(--amber)}
+#sideBox.starting #sideTxt{font-size:34px}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -311,10 +310,10 @@ button kbd{color:var(--ink)}
     <div class="proceedhint">or press <kbd>Enter</kbd></div>
   </div>
   <div id="bjGame" style="display:none">
-    <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div></div><div id="toast"></div><div id="cdOverlay"></div>
+    <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div></div><div id="toast"></div>
     <div id="cardnote"><span class="scorepill">Score = Quality &times; 2 &minus; Dose</span><span>Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;1.5 = &times;9 of the start)</span></div>
     <div class="grid3">
-      <div class="clockrow"><div id="gClockBig" class="cbox gclock"><span class="dot"></span><svg class="hg" viewBox="0 0 24 24" width="30" height="30"><path d="M6 2h12v4l-5 6 5 6v4H6v-4l5-6-5-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 5h7l-3.5 4.2z" fill="currentColor"/><path d="M8 19h8l-4-4.5z" fill="currentColor"/></svg><div class="cmain"><small>TIME LEFT</small><b id="gTime">3:00</b></div></div><div id="sideBox" class="cbox" data-side=""><div class="cmain"><small>CURRENT SIDE</small><b id="sideTxt">&ndash;</b></div><div class="sidesec" id="sideSec"></div><i class="sidebar" id="sideBar"></i></div></div>
+      <div class="clockrow"><div id="gClockBig" class="cbox gclock"><span class="dot"></span><svg class="hg" viewBox="0 0 24 24" width="30" height="30"><path d="M6 2h12v4l-5 6 5 6v4H6v-4l5-6-5-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 5h7l-3.5 4.2z" fill="currentColor"/><path d="M8 19h8l-4-4.5z" fill="currentColor"/></svg><div class="cmain"><small>TIME LEFT</small><b id="gTime">3:00</b></div></div><div id="sideBox" class="cbox" data-side=""><div class="cmain"><small id="sideLbl">CURRENT SIDE</small><b id="sideTxt">&ndash;</b></div><div class="sidesec" id="sideSec"></div><i class="sidebar" id="sideBar"></i></div></div>
       <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
@@ -469,39 +468,34 @@ function reveal(){
   $('#bjGame').style.display='none';$('#rvBack').onclick=hideReveal;$('#rvNew').onclick=bjNew;
 }
 $('#coinL').onclick=()=>countdownFirst('L');$('#coinR').onclick=()=>countdownFirst('R');$('#coinF').onclick=spinFirst;
-// manual pick: 3-2-1 before the game (and the clock) starts
-function countdownFirst(team){
+// Start sequence: exactly 3.0 s either way, shown in the CURRENT SIDE box, then the game (and clock) starts.
+//  - manual pick: 3 - 2 - 1 for the chosen team
+//  - Random: LEFT/RIGHT flip with decaying speed and land on the winner at 3.0 s
+const START_MS=3000;
+function sideShow(side,txt,sec){const sb=$('#sideBox');sb.className='cbox starting';$('#sideLbl').textContent='GET READY';sb.dataset.side=side;$('#sideTxt').textContent=txt;$('#sideSec').textContent=sec;$('#sideBar').style.width='0';$('#tL').classList.toggle('spin',side==='L');$('#tR').classList.toggle('spin',side==='R')}
+function startSeq(mode,team){
   if(spinning||S.first||S.over)return;
   spinning=true;['coinL','coinR','coinF'].forEach(i=>$('#'+i).disabled=true);
-  const ov=$('#cdOverlay');ov.style.display='flex';
-  const nm=team==='L'?'TEAM LEFT':'TEAM RIGHT';
-  let n=3;
-  (function tick(){
-    if(n===0){ov.style.display='none';['coinL','coinR','coinF'].forEach(i=>$('#'+i).disabled=false);spinning=false;setFirst(team);return}
-    ov.innerHTML='<div class="cdwho" style="color:var(--'+(team==='L'?'lc':'rc')+')">'+nm+' goes first</div><div class="cdnum">'+n+'</div>';
-    n--;setTimeout(tick,1000);
-  })();
+  const end=()=>{['L','R'].forEach(x=>$('#t'+x).classList.remove('spin'));$('#sideBox').classList.remove('starting');$('#sideLbl').textContent='CURRENT SIDE';['coinL','coinR','coinF'].forEach(i=>$('#'+i).disabled=false);spinning=false;setFirst(team)};
+  const nm=x=>x==='L'?'LEFT':'RIGHT';
+  const t0=performance.now();
+  if(mode==='manual'){
+    $('#bjStatus').textContent=(team==='L'?'Team Left':'Team Right')+' goes first — get ready';
+    [3,2,1].forEach((n,k)=>setTimeout(()=>sideShow(team,nm(team),String(n)),k*1000));
+    setTimeout(end,START_MS);
+  }else{
+    $('#bjStatus').textContent='Choosing who goes first…';
+    // flip durations grow geometrically and sum to exactly START_MS; the last flip shows the winner
+    const n=15,g=1.17;let w=0;for(let i=0;i<n;i++)w+=Math.pow(g,i);const a0=START_MS/w;
+    const sides=[];for(let i=0;i<n;i++)sides.push((n-1-i)%2===0?team:(team==='L'?'R':'L'));
+    let at=0;sides.forEach((s,i)=>{setTimeout(()=>sideShow(s,nm(s),'?'),Math.round(at));at+=a0*Math.pow(g,i)});
+    setTimeout(()=>{sideShow(team,nm(team),'');},START_MS-1);
+    setTimeout(end,START_MS);
+  }
+  window.__startT0=t0;
 }
-function spinFirst(){
-  if(spinning||S.first||S.over)return;
-  spinning=true;
-  const winner=Math.random()<.5?'L':'R';
-  const seq=[];let d=70,tot=0,side=Math.random()<.5?'L':'R';
-  while(tot<2900){seq.push([side,d]);tot+=d;d*=1.16;side=side==='L'?'R':'L'}
-  if(seq[seq.length-1][0]!==winner)seq.push([winner,d]);
-  ['coinL','coinR','coinF'].forEach(i=>$('#'+i).disabled=true);
-  $('#bjStatus').textContent='Picking who goes first\u2026';
-  const mark=x=>{$('#tL').classList.toggle('spin',x==='L');$('#tR').classList.toggle('spin',x==='R')};
-  (function run(i){
-    if(i>=seq.length){
-      $('#t'+winner).classList.remove('spin');$('#t'+winner).classList.add('win');
-      $('#bjStatus').textContent=(winner==='L'?'Team Left':'Team Right')+' picks first!';
-      setTimeout(()=>{['L','R'].forEach(x=>$('#t'+x).classList.remove('win','spin'));['coinL','coinR','coinF'].forEach(i=>$('#'+i).disabled=false);spinning=false;setFirst(winner)},1100);
-      return;
-    }
-    mark(seq[i][0]);setTimeout(()=>run(i+1),seq[i][1]);
-  })(0);
-}
+function countdownFirst(team){startSeq('manual',team)}
+function spinFirst(){startSeq('random',Math.random()<.5?'L':'R')}
 
 // ---------- clocks: 30 s per turn (timeout = STAND), 3:00 for the whole game (end = both STAND) ----------
 const _q=new URLSearchParams(location.search);const TURN_MS=(+_q.get('turn')||30)*1000,GLOBAL_MS=(+_q.get('game')||180)*1000; /* ?turn= and ?game= (seconds) are for testing */
@@ -514,6 +508,7 @@ function clockSync(){
 }
 function fmt2(ms){const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
 function clockDraw(){
+  if(spinning)return;
   const now=paused?pAt:Date.now();
   const live=!!(S&&S.first&&!S.over&&gEnd);
   const gl=live?gEnd-now:(gEnd?Math.max(0,gEnd-now):GLOBAL_MS);

@@ -4,8 +4,8 @@
   const R0 = 1 / 8.33;          // hidden start exposure (fraction of ideal)
   const RETAKE = 3;             // fixed per-retake dose cost
   const LIMIT = 50;             // dose limit
-  const CARDS = [2, 3, 4, 6, 8, 10, 15, 40]; // multiples of the INITIAL scan
-  const CARD_LABELS = ['×2', '×3', '×4', '×6', '×8', '×10', '×15', '×40'];
+  const CARDS = [1 / 6, 1 / 4, 1 / 3, 1 / 2, 2, 3, 4, 6];
+  const CARD_LABELS = ['×⅙', '×¼', '×⅓', '×½', '×2', '×3', '×4', '×6'];
   const SIGMA0 = 0.12;          // noise constant (full-scale units)
 
   function quality(r) {
@@ -24,7 +24,7 @@
     let r = r0, D = doseOf(r0), n = 0;
     for (const ci of seq) {
       if (D >= LIMIT) break;
-      r = r0 * CARDS[ci]; D += doseOf(r) + RETAKE; n++; // each card = a new scan at initial x card
+      r *= CARDS[ci]; D += doseOf(r) + RETAKE; n++;
     }
     const Q = quality(r);
     return { r, D, Q, score: 2 * Q - D, steps: n };

@@ -8,12 +8,13 @@ function chk(cards, r, Q, D, S) {
 }
 chk([], 0.12, 34.6, 1.2, 68.1);
 chk([6], 0.72, 84.9, 11.4, 158.3);
-chk([8], 0.96, 98.0, 13.8, 182.2);
-chk([10], 1.2, 100, 16.2, 183.8);
-chk([15], 1.8, 100, 22.2, 177.8);
-chk([40], 4.8, 94.7, 52.2, 137.2);
-chk([2, 10], 1.2, 100, 21.6, 178.4);
-chk([4, 10], 1.2, 100, 24.0, 176.0);
+chk([3, 3], 1.08, 100, 21.6, 178.4);
+chk([2, 4], 0.96, 98.0, 19.2, 176.8);
+chk([4, 2], 0.96, 98.0, 21.6, 174.4);
+chk([3, 4], 1.44, 100, 25.2, 174.8);
+chk([4, 4], 1.92, 100, 31.2, 168.8);
+chk([2, 2, 2], 0.96, 98.0, 27.0, 169.0);
+chk([6, 6], 4.32, 97.8, 57.6, 137.9);
 // exhaustive top-3
 const res = [];
 function rec(seq) {
@@ -24,7 +25,7 @@ function rec(seq) {
 rec([]);
 res.sort((a, b) => b.score - a.score);
 console.log('TOP3', res.slice(0, 3).map(x => x.seq.map(i => E.CARD_LABELS[i]).join('>') + ' ' + x.score.toFixed(1)));
-near(res[0].score, 183.8);
+near(res[0].score, 178.4);
 // sigma reference values
 [[0.12, 0.226], [0.25, 0.12], [0.5, 0.050], [0.72, 0.021], [0.96, 0.0025]].forEach(([r, s]) => near(E.sigma(r), s, 0.002));
 console.log('ALL ENGINE TESTS PASS');

@@ -35,6 +35,7 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .pill{background:var(--navy);border:2px solid var(--teal);border-radius:999px;padding:4px 18px;font-size:19px;font-weight:700;color:var(--teal);white-space:nowrap}
 .status{font-size:23px;font-weight:600;text-align:center}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;align-items:start}
+.grid3.g4{grid-template-columns:repeat(4,1fr);gap:14px}
 .team,.ideal{background:var(--panel);border:3px solid #223a5a;border-radius:16px;padding:12px 14px 14px;text-align:center;transition:border-color .2s,box-shadow .2s}
 .team.act{border-color:var(--teal);box-shadow:0 0 0 4px rgba(31,181,168,.22)}
 .team.stand{opacity:.72}
@@ -152,7 +153,7 @@ button kbd{color:var(--ink)}
     <div class="rgrid">
       <div>
         <div class="rule"><b class="n">1</b><span>Both teams start from the <b>same grainy image</b>. The ideal image stays on screen.</span></div>
-        <div class="rule"><b class="n">2</b><span>Each round your team plays <b>one multiplier card</b>. Your new scan = the <b>initial scan &times; card</b> (not your last scan &times; card): new image, more dose.</span></div>
+        <div class="rule"><b class="n">2</b><span>Each round your team plays <b>one multiplier card</b>. It multiplies the exposure of your <b>last scan</b>, so cards <b>chain</b>: new image, more dose. Both teams see every image.</span></div>
         <div class="rule"><b class="n">3</b><span><b>No copying:</b> the card the first team plays is blocked for the second team that round. The first pick alternates.</span></div>
         <div class="rule"><b class="n">4</b><span>Up to <b>4 rounds</b>. Say <b>STAND</b> when you think you are close enough. The other team <b>keeps playing</b> its remaining rounds, so standing early gains nothing.</span></div>
         <div class="rule"><b class="n">5</b><span>Your <b>last image</b> is your submission, not your best one.</span></div>
@@ -160,7 +161,7 @@ button kbd{color:var(--ink)}
       </div>
       <div>
         <div class="rbox"><h3>Scoring</h3><div class="big">Score = Quality &times; 2 &minus; Dose</div>Quality stays <b>hidden</b> until the end: judge it with your eyes. Higher score wins.</div>
-        <div class="rbox"><h3>Cards: multiples of the initial scan</h3><div class="chips"><span>&times;2</span><span>&times;3</span><span>&times;4</span><span>&times;6</span><span>&times;8</span><span>&times;10</span><span>&times;15</span><span>&times;40</span></div><div class="mdiag"><div><em>initial</em><i style="width:8px;background:var(--amber)"></i><u>1</u></div><div><em>play &times;6</em><i style="width:48px"></i><u>6 &times; initial</u></div><div><em>then &times;10</em><i style="width:80px"></i><u>10 &times; initial (not 60)</u></div></div></div>
+        <div class="rbox"><h3>Cards chain on your last scan</h3><div class="chips"><span>&times;&#8537;</span><span>&times;&frac14;</span><span>&times;&#8531;</span><span>&times;&frac12;</span><span>&times;2</span><span>&times;3</span><span>&times;4</span><span>&times;6</span></div><div class="mdiag"><div><em>start</em><i style="width:6px;background:var(--amber)"></i><u>1</u></div><div><em>play &times;6</em><i style="width:36px"></i><u>= 6 &times; start</u></div><div><em>then &times;3</em><i style="width:108px"></i><u>= 18 &times; start</u></div></div></div>
         <div class="rbox"><h3>Dose bar</h3>Relative, no numbers. Green &rarr; amber &rarr; red. When it is full, you are stopped.<div class="bar3"><i style="background:var(--green)"></i><i style="background:var(--amber)"></i><i style="background:var(--red)"></i></div></div>
       </div>
     </div>
@@ -173,6 +174,8 @@ button kbd{color:var(--ink)}
       <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:204px;height:204px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
+      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:204px;height:204px"></canvas>
+        <div class="roundbig">Where both teams began</div></div>
       <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:204px;height:204px"></canvas>
         <div class="roundbig" id="roundInfo">Match this image with as little dose as possible</div></div>
       <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:204px;height:204px"></canvas>
@@ -180,7 +183,7 @@ button kbd{color:var(--ink)}
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>
     <div id="coinbar"><span>Who picks first in round 1?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
-    <div id="cardnote">Each card multiplies the <b>initial</b> scan, not your last scan</div>
+    <div id="cardnote">Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;3 = &times;18 of the start)</div>
     <div id="cards"></div>
     <div class="btns">
       <button id="standBtn" class="sec">STAND <kbd>S</kbd></button>
@@ -199,8 +202,8 @@ button kbd{color:var(--ink)}
   const R0 = 1 / 8.33;          // hidden start exposure (fraction of ideal)
   const RETAKE = 3;             // fixed per-retake dose cost
   const LIMIT = 50;             // dose limit
-  const CARDS = [2, 3, 4, 6, 8, 10, 15, 40]; // multiples of the INITIAL scan
-  const CARD_LABELS = ['×2', '×3', '×4', '×6', '×8', '×10', '×15', '×40'];
+  const CARDS = [1 / 6, 1 / 4, 1 / 3, 1 / 2, 2, 3, 4, 6];
+  const CARD_LABELS = ['×⅙', '×¼', '×⅓', '×½', '×2', '×3', '×4', '×6'];
   const SIGMA0 = 0.12;          // noise constant (full-scale units)
 
   function quality(r) {
@@ -219,7 +222,7 @@ button kbd{color:var(--ink)}
     let r = r0, D = doseOf(r0), n = 0;
     for (const ci of seq) {
       if (D >= LIMIT) break;
-      r = r0 * CARDS[ci]; D += doseOf(r) + RETAKE; n++; // each card = a new scan at initial x card
+      r *= CARDS[ci]; D += doseOf(r) + RETAKE; n++;
     }
     const Q = quality(r);
     return { r, D, Q, score: 2 * Q - D, steps: n };
@@ -350,7 +353,7 @@ function playCard(ci){
   const t=curTeam();if(!t||paused)return;
   if(S.pos===1&&S.usedCard===ci)return; // no copying
   snap();const T=S.T[t];
-  T.r=E.R0*E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(S.round*10+(t==='L'?1:2));
+  T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(S.round*10+(t==='L'?1:2));
   if(S.pos===0)S.usedCard=ci;
   if(T.D>=E.LIMIT)T.stopped=true;
   S.pos++;advance();bjRender();
@@ -363,6 +366,7 @@ function bjRender(){
     const h=$('#h'+t);h.innerHTML='';T.hist.forEach((r,i)=>{const w=document.createElement('div');w.className='hi'+(i===T.hist.length-1?' last':'');const c=mk(120,120);drawTo(c,drImg(r,T.seeds[i]));w.appendChild(c);const sp=document.createElement('span');sp.textContent=T.cards[i];w.appendChild(sp);h.appendChild(w)});
     bar(t);$('#t'+t).className='team'+(curTeam()===t?' act':'')+((T.stand||T.stopped)?' stand':'')});
   drawTo($('#cI'),baseImg);
+  {const any=S.T.L.hist.length>1||S.T.R.hist.length>1;$('#tS').style.display=any?'':'none';document.querySelector('.grid3').classList.toggle('g4',any);if(any)drawTo($('#cS'),drImg(S.T.L.hist[0],S.T.L.seeds[0]))}
   const t=curTeam();let msg;
   if(!S.first)msg='Who picks first in round 1? Press Random or choose a team';
   else if(S.over)msg='Game over — press Reveal';

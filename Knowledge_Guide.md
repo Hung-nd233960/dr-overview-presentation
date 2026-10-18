@@ -180,3 +180,9 @@ Aims: (1) patients exposed to minimum radiation, **ALARA**; (2) **optimum image 
 | Seeram's own wording and figures | read directly from `Material_CH1.pdf` | none |
 
 - **Dose limit = 50 (relative):** a team that reaches it STANDS immediately; the other team keeps playing.
+
+## 18. Turn order and fairness (Blackjack)
+
+- Order: the first team (chosen by Random) plays once, the second team then plays **twice in a row** as compensation for moving second, then they alternate: **L R R L R L R L** if Left plays first (4 scans each). Entries of a team that has stood or hit the dose limit are skipped.
+- **No copying:** you cannot play the card your opponent played on their most recent turn.
+- Why: going first is treated as a head start on the shared game clock, so the second team gets two consecutive turns in return. The second team also sees the first team's image before choosing; whether that offsets the head start is a design choice to tune in rehearsal (an option is to hide the opponent's latest image until both have played).

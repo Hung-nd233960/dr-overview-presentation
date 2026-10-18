@@ -219,9 +219,9 @@ button kbd{color:var(--ink)}
     <div class="rgrid">
       <div>
         <div class="rule"><b class="n">1</b><span>Both teams start from the <b>same grainy image</b>. The ideal image stays on screen. The start is <b>different every game</b>.</span></div>
-        <div class="rule"><b class="n">2</b><span>Each round your team plays <b>one multiplier card</b>. It multiplies the exposure of your <b>last scan</b>, so cards <b>chain</b>: new image, more dose. Both teams see every image.</span></div>
-        <div class="rule"><b class="n">3</b><span><b>No copying:</b> the card the first team plays is blocked for the second team that round. The first pick alternates.</span></div>
-        <div class="rule"><b class="n">4</b><span>Up to <b>4 rounds</b>. Say <b>STAND</b> when you think you are close enough. The other team <b>keeps playing</b> its remaining rounds, so standing early gains nothing.</span></div>
+        <div class="rule"><b class="n">2</b><span>Each turn your team plays <b>one multiplier card</b>. It multiplies the exposure of your <b>last scan</b>, so cards <b>chain</b>: new image, more dose. Both teams see every image.</span></div>
+        <div class="rule"><b class="n">3</b><span><b>Turn order:</b> the first team plays once, the other team then plays <b>twice in a row</b> (its trade for going second), then they alternate: <b style="white-space:nowrap">L R R L R L R L</b> (4 scans each).</span></div>
+        <div class="rule"><b class="n">4</b><span><b>No copying:</b> you cannot play the card your opponent played last. Say <b>STAND</b> when close enough; the other team <b>keeps playing</b>, so standing early gains nothing.</span></div>
         <div class="rule"><b class="n">5</b><span>Your <b>last image</b> is your submission, not your best one.</span></div>
         <div class="rule"><b class="n">6</b><span><b>Clocks:</b> 30 s per turn and 3:00 for the whole game. If your turn clock runs out, your team <b>STANDS</b> at once. When the game clock ends, <b>both teams STAND</b>.</span></div>
       </div>
@@ -250,7 +250,7 @@ button kbd{color:var(--ink)}
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>
-    <div id="coinbar"><span>Who picks first in round 1?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
+    <div id="coinbar"><span>Who plays first?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
     <div class="playbar">
     <div class="cardcol"><div id="cards"></div>
     <div id="dosewarn"><svg class="trefoil" viewBox="-50 -50 100 100" width="22" height="22" fill="currentColor" aria-hidden="true"><circle r="8"/><path d="M-23.00,-39.84 A46,46 0 0 1 23.00,-39.84 L6.50,-11.26 A13,13 0 0 0 -6.50,-11.26 Z"/><path d="M46.00,0.00 A46,46 0 0 1 23.00,39.84 L6.50,11.26 A13,13 0 0 0 13.00,0.00 Z"/><path d="M-23.00,39.84 A46,46 0 0 1 -46.00,0.00 L-13.00,0.00 A13,13 0 0 0 -6.50,11.26 Z"/></svg> Stronger multiplier = more added dose: each scan adds about 10 &times; its exposure (+3), and dose never goes down.</div></div>
@@ -310,34 +310,38 @@ let S=null,stack=[];
 // ?r0=0.12 fixes it for rehearsal/testing.
 let R0g=E.R0,SEEDg=7;
 function randStart(){const q=new URLSearchParams(location.search);const f=parseFloat(q.get('r0'));R0g=f>0?f:Math.round((0.08+Math.random()*0.08)*1000)/1000;SEEDg=Math.floor(Math.random()*900000)+100;}
-function newState(){return{round:1,first:null,order:null,pos:0,usedCard:null,over:false,
+// Turn order: first team once, the second team twice in a row (its trade for going second), then alternate.
+// F = first mover, S = second mover: 4 scans each.
+const PATTERN='FSSFSFSF';
+function newState(){return{i:0,first:null,last:{L:null,R:null},prev:null,over:false,
   T:{L:{r:R0g,D:E.doseOf(R0g),hist:[R0g],cards:['start'],seeds:[SEEDg],stand:false,stopped:false},R:{r:R0g,D:E.doseOf(R0g),hist:[R0g],cards:['start'],seeds:[SEEDg],stand:false,stopped:false}}}}
 function snap(){stack.push(JSON.stringify(S))}
 function hideReveal(){$('#revealbox').style.display='none';if(typeof rulesOn==='undefined'||!rulesOn)$('#bjGame').style.display='block'}
 function bjNew(){randStart();S=newState();stack=[];clocksReset();hideReveal();bjRender()}
 function active(t){return !S.T[t].stand&&!S.T[t].stopped}
-function curTeam(){if(S.over||!S.first)return null;return S.order[S.pos]}
+function other(t){return t==='L'?'R':'L'}
+function teamAt(k){return PATTERN[k]==='F'?S.first:other(S.first)}
+function curTeam(){if(S.over||!S.first)return null;return teamAt(S.i)}
 function advance(){
-  // move to next active actor; handle round/game end
-  for(let guard=0;guard<10;guard++){
-    if(S.pos>=2){S.round++;S.pos=0;S.usedCard=null;S.order=[S.first,S.first==='L'?'R':'L'];S.first=S.order[1];S.order=[S.first,S.first==='L'?'R':'L'];}
-    if(S.round>4||(!active('L')&&!active('R'))){S.over=true;return}
-    if(active(S.order[S.pos]))return;
-    S.pos++;
+  // skip entries of teams that have stood / hit the dose limit; end when nobody is active or the order is used up
+  for(;;){
+    if(S.i>=PATTERN.length||(!active('L')&&!active('R'))){S.over=true;return}
+    if(active(teamAt(S.i)))return;
+    S.i++;
   }
 }
 let spinning=false;
-function setFirst(t){if(spinning||S.first||S.over)return;snap();gEnd=Date.now()+GLOBAL_MS;S.first=t;S.order=[t,t==='L'?'R':'L'];S.pos=0;advance();bjRender()}
+function setFirst(t){if(spinning||S.first||S.over)return;snap();gEnd=Date.now()+GLOBAL_MS;S.first=t;S.i=0;advance();bjRender()}
 function playCard(ci){
   const t=curTeam();if(!t||paused)return;
-  if(S.pos===1&&S.usedCard===ci)return; // no copying
+  if(S.last[other(t)]===ci)return; // no copying: not the card your opponent played last
   snap();const T=S.T[t];
-  T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(SEEDg+S.round*10+(t==='L'?1:2));
-  if(S.pos===0)S.usedCard=ci;
+  T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(SEEDg+S.i*10+(t==='L'?1:2));
+  S.last[t]=ci;
   if(T.D>=E.LIMIT){T.stand=true;T.stopped=true;toast('Dose limit reached: '+(t==='L'?'Team Left':'Team Right')+' STANDS',true)}
-  S.pos++;advance();bjRender();
+  S.prev=t;S.i++;advance();bjRender();
 }
-function doStand(){const t=curTeam();if(!t||paused)return;snap();S.T[t].stand=true;S.pos++;advance();bjRender()}
+function doStand(){const t=curTeam();if(!t||paused)return;snap();S.T[t].stand=true;S.prev=t;S.i++;advance();bjRender()}
 function bjUndo(){if(!stack.length)return;S=JSON.parse(stack.pop());hideReveal();turnKey='';if(gEnd&&gEnd<Date.now()+30000)gEnd=Date.now()+30000;bjRender()}
 function bar(t){const T=S.T[t];const f=Math.min(1,T.D/E.LIMIT);const el=$('#d'+t);el.style.width=(f*100)+'%';el.style.background=f<.5?'var(--green)':f<.85?'var(--amber)':'var(--red)'}
 function bjRender(){
@@ -347,16 +351,16 @@ function bjRender(){
   drawTo($('#cI'),baseImg);
   {const any=S.T.L.hist.length>1||S.T.R.hist.length>1;$('#tS').style.display=any?'':'none';document.querySelector('.grid3').classList.toggle('g4',any);if(any)drawTo($('#cS'),drImg(S.T.L.hist[0],S.T.L.seeds[0]))}
   const t=curTeam();let msg;
-  if(!S.first)msg='Who picks first in round 1? Press Random or choose a team';
+  if(!S.first)msg='Who plays first? Press Random or choose a team';
   else if(S.over)msg='Game over — press Reveal';
   else{const o=t==='L'?'R':'L',nm=x=>x==='L'?'Team Left':'Team Right';
-    if(S.T[o].stand||S.T[o].stopped)msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' keeps playing ('+nm(o)+(S.T[o].stopped?' hit the dose limit and stands':' stood')+')';
-    else msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' to play'+(S.pos===1?' (second pick)':' (first pick)')}
+    if(S.T[o].stand||S.T[o].stopped)msg='Turn '+(S.i+1)+' of 8 \u2014 '+nm(t)+' keeps playing ('+nm(o)+(S.T[o].stopped?' hit the dose limit and stands':' stood')+')';
+    else msg='Turn '+(S.i+1)+' of 8 \u2014 '+nm(t)+' to play'+(S.prev===t?' (2nd in a row)':'')}
   $('#bjStatus').textContent=paused?'\u23F8 Paused \u2014 press P to resume':msg;
-  $('#roundPill').textContent=S.over?'Game over':'Round '+Math.min(S.round,4)+' / 4';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this with the least dose':'Match this with the least dose');
+  $('#roundPill').textContent=S.over?'Game over':'Turn '+Math.min(S.i+1,8)+' / 8';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this with the least dose':'Match this with the least dose');
   ['L','R'].forEach(x=>{if(S.T[x].stopped&&!S.T[x].stand&&!S.over){}});
   const cards=$('#cards');cards.innerHTML='';
-  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||(S.pos===1&&S.usedCard===i))?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
+  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||S.last[other(t)]===i)?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
   $('#standBtn').disabled=!t;$('#coinbar').style.display=S.first?'none':'flex';
   $('#reveal').disabled=!S.over;$('#reveal').classList.toggle('ready',S.over);clockSync();
 }
@@ -400,7 +404,7 @@ const _q=new URLSearchParams(location.search);const TURN_MS=(+_q.get('turn')||30
 let gEnd=null,tEnd=null,paused=false,pAt=0,turnKey='';
 function clocksReset(){gEnd=null;tEnd=null;paused=false;turnKey='';$('#pauseBtn').innerHTML='Pause <kbd>P</kbd>';clockDraw()}
 function clockSync(){
-  const key=(S.over||!S.first)?'':S.round+'-'+S.pos+'-'+curTeam();
+  const key=(S.over||!S.first)?'':S.i+'-'+curTeam();
   if(key!==turnKey){turnKey=key;tEnd=key?Date.now()+TURN_MS:null;if(paused&&tEnd)tEnd+=0}
   clockDraw();
 }
@@ -445,7 +449,7 @@ setInterval(()=>{
   }
   if(tEnd&&now>=tEnd){
     const tm=curTeam();if(!tm){return}
-    snap();S.T[tm].stand=true;S.pos++;advance();
+    snap();S.T[tm].stand=true;S.prev=tm;S.i++;advance();
     toast('\u23F1 Time\u2019s up: '+(tm==='L'?'Team Left':'Team Right')+' STANDS');bjRender();return;
   }
   clockDraw();

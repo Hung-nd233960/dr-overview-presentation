@@ -123,15 +123,15 @@ Target 17:00 including two activities. Speakers: A, B, C, D (replace with names)
 
 ## Slide 11: Activity 2: X-ray Blackjack
 
-**Speaker:** D · **Time:** 2:30
+**Speaker:** D · **Time:** 3:20
 
 | English (say aloud) | Tiếng Việt (meaning) |
 |---|---|
 | [D hosts. A clicks cards, B referees, C collects Team Left's votes.] Split the room: left half is Team Left, right half is Team Right. Each team picks a captain. | [D điều khiển. A bấm thẻ, B làm trọng tài, C thu phiếu đội Trái.] Chia lớp: nửa trái là đội Trái, nửa phải là đội Phải. Mỗi đội chọn một đội trưởng. |
 | Rules. Both teams start from the same grainy image. The ideal image is always on the screen. Your goal: end as close to the ideal as possible, using as little dose as possible. | Luật chơi. Hai đội bắt đầu từ cùng một ảnh nhiễu hạt. Ảnh lý tưởng luôn hiện trên màn hình. Mục tiêu: cuối cùng gần ảnh lý tưởng nhất với liều thấp nhất. |
 | Each round you play one multiplier card on your own exposure. You see your new image, and so does the other team. The first team's card is blocked for the second team, so no copying. | Mỗi vòng, đội chơi một thẻ nhân lên phơi sáng của mình. Ảnh mới hiện ra cho cả hai đội cùng xem. Thẻ của đội đi trước bị khóa với đội sau, nên không được chép. |
-| Up to four rounds, or say STAND if you think you are close enough. If one team stands, the other keeps playing its remaining rounds, so standing early gains nothing. Your last image is your submission. Score is quality times two, minus dose. Quality stays hidden; the dose bar turns amber, then red. | Tối đa bốn vòng, hoặc nói STAND nếu thấy đã đủ gần. Nếu một đội dừng, đội kia vẫn chơi tiếp các vòng còn lại, nên dừng sớm không có lợi thế. Ảnh cuối cùng là bài nộp. Điểm bằng chất lượng nhân hai trừ liều. Chất lượng bị ẩn; thanh liều chuyển sang vàng rồi đỏ. |
-| [Run 4 rounds, about 25 seconds each. Captain calls the card within 10 seconds. After the last round press Reveal and read the scores.] That was X-ray Blackjack. Now let us see what the screen could not show you. | [Chơi 4 vòng, mỗi vòng khoảng 25 giây. Đội trưởng gọi thẻ trong 10 giây. Sau vòng cuối bấm Reveal và đọc điểm.] Đó là X-ray Blackjack. Giờ hãy xem điều mà màn hình chưa cho các bạn thấy. |
+| Up to four rounds, or say STAND if you think you are close enough. If one team stands, the other keeps playing its remaining rounds, so standing early gains nothing. Two clocks run: thirty seconds per turn, and three minutes for the whole game. If your turn clock runs out your team stands at once; when the game clock ends, both teams stand. Your last image is your submission. Score is quality times two, minus dose. Quality stays hidden; the dose bar turns amber, then red. | Tối đa bốn vòng, hoặc nói STAND nếu thấy đã đủ gần. Nếu một đội dừng, đội kia vẫn chơi tiếp các vòng còn lại, nên dừng sớm không có lợi thế. Có hai đồng hồ: ba mươi giây mỗi lượt và ba phút cho cả trò chơi. Hết giờ lượt thì đội đó dừng ngay; hết giờ chung thì cả hai đội dừng. Ảnh cuối cùng là bài nộp. Điểm bằng chất lượng nhân hai trừ liều. Chất lượng bị ẩn; thanh liều chuyển sang vàng rồi đỏ. |
+| [Run up to 4 rounds within the 3:00 game clock; each turn has a 30 s clock (timeout = STAND). Captains call cards quickly. After the last round press Reveal and read the scores.] That was X-ray Blackjack. Now let us see what the screen could not show you. | [Chơi 4 vòng, mỗi vòng khoảng 25 giây. Đội trưởng gọi thẻ trong 10 giây. Sau vòng cuối bấm Reveal và đọc điểm.] Đó là X-ray Blackjack. Giờ hãy xem điều mà màn hình chưa cho các bạn thấy. |
 
 ## Slide 12: The number your eyes can't see: EI, DI and dose creep
 
@@ -205,7 +205,7 @@ Target 17:00 including two activities. Speakers: A, B, C, D (replace with names)
 1. D splits the room into Team Left and Team Right (each picks a captain). D reads the 4 rules (about 20 s). B presses **Random** (a 3–4 second spinner decides who picks first) or clicks a team.
 2. Each round: the team on turn discusses for at most 10 s; the captain calls a card or “stand”. A clicks it (keys 1–8 = cards in order, S = stand). The new image appears for both teams.
 3. B enforces “no copy” (the first team’s card is greyed out for the second team), alternates the first pick each round, and announces the dose-bar colour (green → amber → red).
-4. If one team stands, the other keeps playing its remaining rounds. A mistake? Press U (undo). C collects Team Left’s hand-vote on cards when the captain cannot decide.
+4. If one team stands, the other keeps playing its remaining rounds. P pauses both clocks. A mistake? Press U (undo). C collects Team Left’s hand-vote on cards when the captain cannot decide.
 5. After round 4, or when both teams have stood or been stopped by the dose limit, D presses Reveal (V). Read both scores, name the winner.
 6. Punchline: the final images look alike; only the DI shows who gave more dose. Then slide 12.
 

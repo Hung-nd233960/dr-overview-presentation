@@ -1,6 +1,6 @@
 # Rehearsal checklist
 
-## Timing table (target 17:00)
+## Timing table (target 17:50; the course limit is 18:00)
 
 | Slide | Title | Who | Time | Running total |
 |---|---|---|---|---|
@@ -15,14 +15,14 @@
 | 8 | Flat panels: indirect vs direct | C | 1:15 | 8:30 |
 | 9 | Straight line vs S-curve | C | 1:15 | 9:45 |
 | 10 | **Activity 1**: Radiologist Eye Test | C (D reveals) | 1:00 | 10:45 |
-| 11 | **Activity 2**: X-ray Blackjack | D (A clicks, B referees, C votes) | 2:30 | 13:15 |
-| 12 | EI, DI and dose creep | D | 1:00 | 14:15 |
-| 13 | Fluoroscopy and mammography | A | 0:50 | 15:05 |
-| 14 | PACS | B | 1:00 | 16:05 |
-| 15 | QA + take-home | D | 0:45 | 16:50 |
-| Refs | References and AI declaration | D | 0:10 | 17:00 |
+| 11 | **Activity 2**: X-ray Blackjack (20 s rules + 3:00 game clock) | D (A clicks, B referees, C votes) | 3:20 | 14:05 |
+| 12 | EI, DI and dose creep | D | 1:00 | 15:05 |
+| 13 | Fluoroscopy and mammography | A | 0:50 | 15:55 |
+| 14 | PACS | B | 1:00 | 16:55 |
+| 15 | QA + take-home | D | 0:45 | 17:40 |
+| Refs | References and AI declaration | D | 0:10 | 17:50 |
 
-If over time: cut slide 13 to 30 s and slide 5 to 30 s. Course limit is 18 min.
+The Blackjack clocks (30 s per turn, 3:00 for the game) take the segment to about 3:20. That leaves only 10 s of slack: if you run long, cut slide 13 to 30 s and slide 5 to 30 s (saves 35 s).
 
 ## Roles at a glance
 

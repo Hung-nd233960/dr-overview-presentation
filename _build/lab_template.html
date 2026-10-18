@@ -189,7 +189,7 @@ button kbd{color:var(--ink)}
 /* clock row: TIME LEFT + CURRENT SIDE, equal boxes side by side (no corner rings) */
 :root{--lc:#4aa3ff;--rc:#ff8a3d}
 .clockrow{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:flex;gap:10px;z-index:2}
-.cbox,.clockrow .gclock{position:relative;left:auto;bottom:auto;transform:none;width:208px;height:66px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#0a1322;border:2px solid #2c4468;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.45);overflow:hidden;color:var(--teal)}
+.cbox,.clockrow .gclock{position:relative;left:auto;bottom:auto;transform:none;width:236px;height:66px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#0a1322;border:2px solid #2c4468;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.45);overflow:hidden;color:var(--teal)}
 .cbox .cmain{display:flex;flex-direction:column;min-width:0}
 .cbox small{display:block;font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--mute);white-space:nowrap}
 .cbox b{display:block;font-size:38px;line-height:1.05;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -253,6 +253,10 @@ button kbd{color:var(--ink)}
 #sideBox.starting .sidesec{font-size:44px;padding-bottom:6px;color:var(--ink)}
 #sideBox.starting small{color:var(--amber)}
 #sideBox.starting #sideTxt{font-size:34px}
+#sideBox .sidesec{font-size:44px;line-height:1;padding-bottom:0;align-self:center}
+#sideBox .sidesec .u{font-size:20px;margin-left:2px;color:var(--mute)}
+#sideBox.warn .sidesec .u,#sideBox.crit .sidesec .u{color:inherit}
+#sideBox.starting .sidesec{font-size:48px}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -521,7 +525,7 @@ function clockDraw(){
   if(cur&&tEnd){
     const rem=Math.max(0,tEnd-now);
     sb.dataset.side=cur;tx.textContent=cur==='L'?'LEFT':'RIGHT';
-    sec.textContent=Math.ceil(rem/1000)+'s';
+    sec.innerHTML=Math.ceil(rem/1000)+'<span class="u">s</span>';
     bar.style.width=Math.min(100,rem/TURN_MS*100)+'%';
     const cls=rem<=5000?'crit':rem<=10000?'warn':'';
     if(cls){sb.classList.add(cls);$('#t'+cur).classList.add(cls)}

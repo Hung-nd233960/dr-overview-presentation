@@ -127,6 +127,18 @@ button kbd{color:var(--ink)}
 .card.used{background:#3a4658;color:#6c7a90;border-color:#3a4658;text-decoration:line-through;cursor:not-allowed;box-shadow:none}
 .ctrls{display:grid;grid-template-columns:repeat(3,auto);gap:8px}
 .ctrls button{font-size:17px;padding:8px 14px;white-space:nowrap}
+
+/* larger images: single-row history (thumb over multiplier), tighter panels */
+.team,.ideal{padding:10px 10px 12px}
+.grid3.g4{gap:12px}
+.team h2,.ideal h2{margin:0 0 8px;font-size:22px}
+.row2{margin-top:8px}
+.row2 .lbl{display:none}
+.hist{grid-template-columns:repeat(5,46px);gap:2px 6px;justify-content:center}
+.hist canvas{width:46px;height:46px}
+.hi span{font-size:13px}
+.roundbig{min-height:0;margin-top:10px;font-size:15px}
+.dosewrap{margin-top:8px}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -187,14 +199,14 @@ button kbd{color:var(--ink)}
     <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div><span class="clock" id="tClock"><small>TURN</small>30</span><span class="clock" id="gClock"><small>GAME</small>3:00</span></div><div id="toast"></div>
     <div id="cardnote"><span class="scorepill">Score = Quality &times; 2 &minus; Dose</span><span>Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;3 = &times;18 of the start)</span></div>
     <div class="grid3">
-      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:172px;height:172px"></canvas>
+      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:268px;height:268px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
-      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:172px;height:172px"></canvas>
+      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:268px;height:268px"></canvas>
         <div class="roundbig">Where both teams began</div></div>
-      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:172px;height:172px"></canvas>
+      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:268px;height:268px"></canvas>
         <div class="roundbig" id="roundInfo">Match this image with as little dose as possible</div></div>
-      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:172px;height:172px"></canvas>
+      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:268px;height:268px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>

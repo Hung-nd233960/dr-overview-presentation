@@ -257,6 +257,17 @@ button kbd{color:var(--ink)}
 #sideBox .sidesec .u{font-size:20px;margin-left:2px;color:var(--mute)}
 #sideBox.warn .sidesec .u,#sideBox.crit .sidesec .u{color:inherit}
 #sideBox.starting .sidesec{font-size:48px}
+
+/* centre clocks must never be wider than the middle column: compact when only 3 panels show */
+.grid3:not(.g4) .clockrow{gap:8px}
+.grid3:not(.g4) .cbox,.grid3:not(.g4) .clockrow .gclock{width:188px;padding:0 10px;gap:8px}
+.grid3:not(.g4) .cbox b{font-size:32px}
+.grid3:not(.g4) #sideBox #sideTxt{font-size:30px}
+.grid3:not(.g4) #sideBox .sidesec{font-size:36px}
+.grid3:not(.g4) #sideBox .sidesec .u{font-size:16px}
+.grid3:not(.g4) #sideBox.starting .sidesec{font-size:40px}
+.grid3:not(.g4) .gclock .hg{width:24px;height:24px}
+.grid3:not(.g4) .gclock .dot{width:10px;height:10px}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>

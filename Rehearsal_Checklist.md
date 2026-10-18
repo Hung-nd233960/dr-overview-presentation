@@ -29,7 +29,7 @@ The Blackjack clocks (30 s per turn, 3:00 for the game) take the segment to abou
 | | Speaks | Activity duty |
 |---|---|---|
 | **A** | Title, 1, 2, 3, 13 | Blackjack: laptop operator (clicks cards) |
-| **B** | 4, 5, 6, 14 | Blackjack: referee (no-copy, alternate first pick, dose-bar colour) |
+| **B** | 4, 5, 6, 14 | Blackjack: referee (no-copy, alternate first pick, dose-bar colour; a full dose bar = that team STANDS, the other keeps playing) |
 | **C** | 7, 8, 9, 10 | Hosts Activity 1; collects Team Left's votes in Blackjack |
 | **D** | 11, 12, 15, Refs | Hosts Activity 2; reveals answers in Activity 1 |
 

@@ -178,3 +178,5 @@ Aims: (1) patients exposed to minimum radiation, **ALARA**; (2) **optimum image 
 | CR resolution lower because of laser scatter / sampling | ⚠ not verified | none |
 | Higher kVp + lower mAs reduces dose but lowers contrast | ⚠ standard physics, not re-checked | Seeram §1.3.6 |
 | Seeram's own wording and figures | read directly from `Material_CH1.pdf` | none |
+
+- **Dose limit = 50 (relative):** a team that reaches it STANDS immediately; the other team keeps playing.

@@ -173,6 +173,10 @@ button kbd{color:var(--ink)}
 .gclock small{font-size:11px}
 .gclock .hg{width:32px;height:32px}
 .gclock .dot{width:12px;height:12px}
+
+.cardcol{display:flex;flex-direction:column;align-items:center;gap:8px}
+#dosewarn{font-size:15px;font-weight:600;color:var(--amber);text-align:center;white-space:nowrap}
+.playbar{margin-top:8px}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -223,7 +227,7 @@ button kbd{color:var(--ink)}
       <div>
         <div class="rbox"><h3>Scoring</h3><div class="big">Score = Quality &times; 2 &minus; Dose</div>Quality stays <b>hidden</b> until the end: judge it with your eyes. Higher score wins.</div>
         <div class="rbox"><h3>Cards chain on your last scan</h3><div class="chips"><span>&times;&#8537;</span><span>&times;&frac14;</span><span>&times;&#8531;</span><span>&times;&frac12;</span><span>&times;1.5</span><span>&times;2</span><span>&times;3</span><span>&times;4</span><span>&times;6</span></div><div class="mdiag"><div><em>start</em><i style="width:6px;background:var(--amber)"></i><u>1</u></div><div><em>play &times;6</em><i style="width:36px"></i><u>= 6 &times; start</u></div><div><em>then &times;1.5</em><i style="width:54px"></i><u>= 9 &times; start</u></div></div></div>
-        <div class="rbox"><h3>Dose bar</h3>Relative, no numbers. Green &rarr; amber &rarr; red. When it is full, you are stopped.<div class="bar3"><i style="background:var(--green)"></i><i style="background:var(--amber)"></i><i style="background:var(--red)"></i></div></div>
+        <div class="rbox"><h3>Dose bar</h3>Relative, no numbers. Green &rarr; amber &rarr; red. A stronger multiplier adds more dose. When it is full, your team <b>STANDS at once</b>; the other team keeps playing.<div class="bar3"><i style="background:var(--green)"></i><i style="background:var(--amber)"></i><i style="background:var(--red)"></i></div></div>
       </div>
     </div>
     <button id="proceed">Proceed to play &#9654;</button>
@@ -234,20 +238,21 @@ button kbd{color:var(--ink)}
     <div id="cardnote"><span class="scorepill">Score = Quality &times; 2 &minus; Dose</span><span>Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;1.5 = &times;9 of the start)</span></div>
     <div class="grid3">
       <div id="gClockBig" class="gclock"><span class="dot"></span><svg class="hg" viewBox="0 0 24 24" width="42" height="42"><path d="M6 2h12v4l-5 6 5 6v4H6v-4l5-6-5-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 5h7l-3.5 4.2z" fill="currentColor"/><path d="M8 19h8l-4-4.5z" fill="currentColor"/></svg><div><small>GAME CLOCK</small><b id="gTime">3:00</b></div></div>
-      <div class="team" id="tL"><div class="tbadge" id="tbL"><span>30</span></div><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:268px;height:268px"></canvas>
+      <div class="team" id="tL"><div class="tbadge" id="tbL"><span>30</span></div><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
-      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:268px;height:268px"></canvas>
+      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="roundbig">Where both teams began</div></div>
-      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:268px;height:268px"></canvas>
+      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="roundbig" id="roundInfo">Match this with the least dose</div></div>
-      <div class="team" id="tR"><div class="tbadge" id="tbR"><span>30</span></div><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:268px;height:268px"></canvas>
+      <div class="team" id="tR"><div class="tbadge" id="tbR"><span>30</span></div><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>
     <div id="coinbar"><span>Who picks first in round 1?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
     <div class="playbar">
-    <div id="cards"></div>
+    <div class="cardcol"><div id="cards"></div>
+    <div id="dosewarn">&#9888; Stronger multiplier = more added dose: each scan adds about 10 &times; its exposure (+3), and dose never goes down.</div></div>
     <div class="ctrls">
       <button id="standBtn" class="sec">STAND <kbd>S</kbd></button>
       <button class="sec" id="undo">Undo <kbd>U</kbd></button>
@@ -423,7 +428,7 @@ function playCard(ci){
   snap();const T=S.T[t];
   T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(SEEDg+S.round*10+(t==='L'?1:2));
   if(S.pos===0)S.usedCard=ci;
-  if(T.D>=E.LIMIT)T.stopped=true;
+  if(T.D>=E.LIMIT){T.stand=true;T.stopped=true;toast('\u26A0 Dose limit reached: '+(t==='L'?'Team Left':'Team Right')+' STANDS')}
   S.pos++;advance();bjRender();
 }
 function doStand(){const t=curTeam();if(!t||paused)return;snap();S.T[t].stand=true;S.pos++;advance();bjRender()}
@@ -439,7 +444,7 @@ function bjRender(){
   if(!S.first)msg='Who picks first in round 1? Press Random or choose a team';
   else if(S.over)msg='Game over — press Reveal';
   else{const o=t==='L'?'R':'L',nm=x=>x==='L'?'Team Left':'Team Right';
-    if(S.T[o].stand||S.T[o].stopped)msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' keeps playing ('+nm(o)+(S.T[o].stand?' stood':' hit the dose limit')+')';
+    if(S.T[o].stand||S.T[o].stopped)msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' keeps playing ('+nm(o)+(S.T[o].stopped?' hit the dose limit and stands':' stood')+')';
     else msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' to play'+(S.pos===1?' (second pick)':' (first pick)')}
   $('#bjStatus').textContent=paused?'\u23F8 Paused \u2014 press P to resume':msg;
   $('#roundPill').textContent=S.over?'Game over':'Round '+Math.min(S.round,4)+' / 4';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this with the least dose':'Match this with the least dose');

@@ -182,6 +182,9 @@ button kbd{color:var(--ink)}
 .cbtext b{font-size:21px;color:var(--ink)}
 .cbtext span{font-size:16px;color:var(--amber)}
 .cbtext span b{font-size:16px;color:var(--amber)}
+.card{color:#141a24}
+.card.red{color:#c9252d}
+.card.used,.card.red.used{color:#6c7a90}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -364,7 +367,7 @@ function bjRender(){
   $('#roundPill').textContent=S.over?'Game over':'Turn '+Math.min(S.i+1,8)+' / 8';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this with the least dose':'Match this with the least dose');
   ['L','R'].forEach(x=>{if(S.T[x].stopped&&!S.T[x].stand&&!S.over){}});
   const cards=$('#cards');cards.innerHTML='';
-  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||S.last[other(t)]===i)?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
+  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+(i%2?' red':'')+((!t||S.last[other(t)]===i)?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
   $('#standBtn').disabled=!t;$('#coinbar').style.display=S.first?'none':'flex';document.querySelector('.cardcol').style.display=S.first?'':'none';
   $('#reveal').disabled=!S.over;$('#reveal').classList.toggle('ready',S.over);clockSync();
 }

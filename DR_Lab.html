@@ -249,6 +249,7 @@ button kbd{color:var(--ink)}
 .rvteam .im .l1{font-size:16px;font-weight:800;margin-top:2px}
 .rvteam .im .l2{font-size:12px;color:var(--mute);white-space:nowrap}
 .punch{font-size:24px;margin-top:12px}
+.row2{min-height:70px}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -512,9 +513,11 @@ function playCard(ci){
 function doStand(){const t=curTeam();if(!t||paused)return;snap();S.T[t].stand=true;S.prev=t;S.i++;advance();bjRender()}
 function bjUndo(){if(!stack.length)return;S=JSON.parse(stack.pop());hideReveal();turnKey='';if(gEnd&&gEnd<Date.now()+30000)gEnd=Date.now()+30000;bjRender()}
 function bar(t){const T=S.T[t];const f=Math.min(1,T.D/E.LIMIT);const el=$('#d'+t);el.style.width=(f*100)+'%';el.style.background=f<.5?'var(--green)':f<.85?'var(--amber)':'var(--red)'}
+// the start image stays hidden until the game (and the clock) starts, so nobody gets thinking time for free
+function hiddenPanel(cv){const x=cv.getContext('2d');x.fillStyle='#0a1322';x.fillRect(0,0,cv.width,cv.height);x.fillStyle='#6f86a6';x.textAlign='center';x.font='bold 56px Calibri,Arial,sans-serif';x.fillText('Start image hidden',cv.width/2,cv.height/2-14);x.font='46px Calibri,Arial,sans-serif';x.fillText('until the game starts',cv.width/2,cv.height/2+40)}
 function bjRender(){
-  ['L','R'].forEach(t=>{const T=S.T[t];drawTo($('#c'+t),drImg(T.r,T.seeds[T.seeds.length-1]));
-    const h=$('#h'+t);h.innerHTML='';T.hist.forEach((r,i)=>{const w=document.createElement('div');w.className='hi'+(i===T.hist.length-1?' last':'');const c=mk(120,120);drawTo(c,drImg(r,T.seeds[i]));w.appendChild(c);const sp=document.createElement('span');sp.textContent=T.cards[i];w.appendChild(sp);h.appendChild(w)});
+  ['L','R'].forEach(t=>{const T=S.T[t];if(S.first)drawTo($('#c'+t),drImg(T.r,T.seeds[T.seeds.length-1]));else hiddenPanel($('#c'+t));
+    const h=$('#h'+t);h.innerHTML='';(S.first?T.hist:[]).forEach((r,i)=>{const w=document.createElement('div');w.className='hi'+(i===T.hist.length-1?' last':'');const c=mk(120,120);drawTo(c,drImg(r,T.seeds[i]));w.appendChild(c);const sp=document.createElement('span');sp.textContent=T.cards[i];w.appendChild(sp);h.appendChild(w)});
     bar(t);$('#t'+t).className='team'+(curTeam()===t?' act':'')+((T.stand||T.stopped)?' stand':'')});
   drawTo($('#cI'),baseImg);
   {const any=S.T.L.hist.length>1||S.T.R.hist.length>1;$('#tS').style.display=any?'':'none';document.querySelector('.grid3').classList.toggle('g4',any);if(any)drawTo($('#cS'),drImg(S.T.L.hist[0],S.T.L.seeds[0]))}

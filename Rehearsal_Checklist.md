@@ -54,6 +54,8 @@ A→B end of slide 3 · B→C end of slide 6 · C→D end of slide 10 · D→A e
 2. **Blackjack** (2:30): split room, Random picks the first team, 8 turns (first team once, other team twice in a row, then alternate), Reveal, punchline. Practise the "stand" and the "undo" key. The start is random every game (0.08–0.16× of ideal), so there is no fixed best route; for a predictable rehearsal open `DR_Lab.html?tab=bj&r0=0.12` (best route ×1.5 then ×6 = 180.2; ×3 then ×3 = 178.4).
 3. Check the debrief on slide 12 follows within 10 s.
 
+Note: in Blackjack the start image is hidden until Random/a team is chosen (clock starts then); the Ideal image is visible from the start.
+
 ## Backup plan
 
 - **HTML won't open**: slides 10 and 11 contain the four warm-up images and the start/ideal pair. Run Activity 1 from the slide; run Blackjack verbally with printed cards (×⅙ … ×6, including ×1.5) and a hand tally of dose (cost = 10 × exposure of that scan + 3; cards chain on the last scan).

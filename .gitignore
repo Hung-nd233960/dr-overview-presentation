@@ -1,0 +1,9 @@
+_build/node_modules/
+_build/sim/
+_build/qa/
+_build/*.raw
+__pycache__/
+*.pyc
+~$*
+.DS_Store
+BRIEF_CH1_for_Sonnet.md

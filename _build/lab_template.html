@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DR Lab</title>
+<style>
+:root{--bg:#0f1b2d;--panel:#16263d;--ink:#eef3fa;--mute:#9fb3cc;--teal:#1fb5a8;--amber:#f2b134;--red:#e2574c;--green:#3fbf6b;--navy:#1b3a63}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Calibri,Arial,sans-serif}
+body{display:flex;flex-direction:column;min-height:100vh}
+header{display:flex;align-items:center;gap:12px;padding:8px 16px;background:#0a1322}
+header h1{font-size:20px;margin:0 16px 0 0;color:var(--teal)}
+.tab{background:var(--panel);color:var(--ink);border:2px solid transparent;border-radius:8px;padding:6px 16px;font-size:18px;cursor:pointer}
+.tab.on{border-color:var(--teal);background:var(--navy)}
+.tab small{color:var(--mute);margin-left:6px}
+main{flex:1;padding:10px 16px}
+section{display:none}section.on{display:block}
+canvas{background:#000;border-radius:6px;display:block}
+.cap{font-size:15px;color:var(--mute);text-align:center;margin-top:3px}
+.note{font-size:13px;color:var(--mute)}
+button{font-family:inherit;font-size:18px;border:0;border-radius:8px;padding:8px 16px;background:var(--teal);color:#06231f;cursor:pointer;font-weight:700}
+button.sec{background:var(--panel);color:var(--ink);border:2px solid var(--mute)}
+button:disabled{opacity:.35;cursor:not-allowed}
+.row{display:flex;gap:14px;align-items:flex-start;justify-content:center}
+.col{display:flex;flex-direction:column;align-items:center}
+.big{font-size:22px;font-weight:700}
+/* Hook / warm-up */
+.panels{display:flex;gap:14px;justify-content:center}
+.tag{margin-top:6px;font-size:26px;font-weight:700;min-height:34px;text-align:center}
+.tag.lo{color:var(--amber)}
+.mini{width:260px;height:14px;background:#0a1322;border-radius:7px;overflow:hidden;margin-top:6px}
+.mini i{display:block;height:100%;background:var(--teal)}
+.badge{display:inline-block;background:var(--navy);border-radius:6px;padding:2px 10px;margin:2px}
+/* Blackjack */
+#bjGame{max-width:1240px;margin:0 auto}
+.statusbar{display:flex;align-items:center;justify-content:center;gap:16px;margin:2px 0 12px}
+.pill{background:var(--navy);border:2px solid var(--teal);border-radius:999px;padding:4px 18px;font-size:19px;font-weight:700;color:var(--teal);white-space:nowrap}
+.status{font-size:23px;font-weight:600;text-align:center}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;align-items:start}
+.team,.ideal{background:var(--panel);border:3px solid #223a5a;border-radius:16px;padding:12px 14px 14px;text-align:center;transition:border-color .2s,box-shadow .2s}
+.team.act{border-color:var(--teal);box-shadow:0 0 0 4px rgba(31,181,168,.22)}
+.team.stand{opacity:.72}
+.team h2,.ideal h2{margin:0 0 10px;font-size:23px;letter-spacing:.5px}
+.team.act h2::after{content:'  \25B8 playing';color:var(--teal);font-size:16px;font-weight:600}
+.team.stand h2::after{content:'  \00B7 done';color:var(--mute);font-size:16px;font-weight:600}
+.ideal h2{color:var(--amber)}
+.team canvas,.ideal canvas{margin:0 auto;border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+.row2{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;min-height:56px}
+.lbl{font-size:14px;color:var(--mute);min-width:52px;text-align:right}
+.hist{display:flex;gap:6px;justify-content:flex-start;align-items:center}
+.hist canvas{width:50px;height:50px;border:2px solid #2c4468;border-radius:5px;box-shadow:none}
+.hist canvas:last-child{border-color:var(--teal)}
+.dosewrap{display:flex;align-items:center;gap:10px;margin-top:10px}
+.dose{flex:1;height:20px;border-radius:10px;background:#0a1322;overflow:hidden;border:1px solid #2c4468}
+.dose i{display:block;height:100%;width:0;background:var(--green);transition:width .5s,background .3s}
+.roundbig{font-size:17px;color:var(--mute);margin-top:12px;min-height:56px;display:flex;align-items:center;justify-content:center}
+#coinbar{display:none;justify-content:center;align-items:center;gap:14px;margin:16px 0 4px;font-size:21px}
+#coinbar button{font-size:19px}
+#cards{display:flex;gap:14px;justify-content:center;margin:16px 0 10px}
+.card{width:96px;height:68px;font-size:32px;border-radius:12px;background:#f4f7fb;color:#12304a;border:3px solid #fff;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+.card:hover:not(.used){transform:translateY(-4px);box-shadow:0 8px 16px rgba(0,0,0,.45)}
+.card.used{background:#3a4658;color:#6c7a90;border-color:#3a4658;text-decoration:line-through;cursor:not-allowed;box-shadow:none}
+#bj .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+/* rules screen */
+#bjRules{max-width:1060px;margin:2px auto 0;background:var(--panel);border:2px solid #223a5a;border-radius:18px;padding:16px 34px 14px}
+#bjRules h1{margin:0;font-size:32px;color:var(--teal)}
+#bjRules .goal{font-size:20px;margin:4px 0 12px;color:var(--ink)}
+.rgrid{display:grid;grid-template-columns:1.25fr 1fr;gap:30px}
+.rule{display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;font-size:18px;line-height:1.3}
+.rule b.n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--teal);color:#06231f;display:flex;align-items:center;justify-content:center;font-size:19px}
+.rbox{background:#0f1b2d;border-radius:12px;padding:10px 16px;margin-bottom:10px;font-size:17px;line-height:1.3}
+.rbox h3{margin:0 0 6px;font-size:19px;color:var(--amber)}
+.rbox .big{font-size:24px;color:var(--ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chips span{background:#f4f7fb;color:#12304a;border-radius:8px;padding:2px 9px;font-weight:800;font-size:19px}
+.bar3{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:8px}
+.bar3 i{flex:1}
+#proceed{display:block;margin:6px auto 0;font-size:24px;padding:10px 40px}
+.proceedhint{text-align:center;color:var(--mute);font-size:14px;margin-top:6px}
+#reveal{display:none}
+#revealbox{display:none;padding:8px 6px}
+.rv{display:flex;gap:14px;justify-content:center}
+.rvteam{width:600px;background:var(--panel);border-radius:10px;padding:8px;text-align:center}
+.rvteam .imgs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.rvteam .im{font-size:13px;text-align:center}
+.rvteam .im canvas{width:100px;height:100px}
+.score{font-size:30px;font-weight:800}
+.win{color:var(--amber)}
+.punch{margin:8px auto;max-width:1100px;text-align:center;font-size:22px;background:var(--navy);padding:8px;border-radius:10px}
+details{max-width:1100px;margin:6px auto;font-size:15px;color:var(--mute)}
+summary{cursor:pointer;font-size:16px;color:var(--ink)}
+kbd{background:#0a1322;border:1px solid #2c4468;border-radius:4px;padding:0 5px}
+</style></head><body>
+<header><h1>DR Lab</h1>
+<button class="tab on" data-t="hook">1 Hook</button>
+<button class="tab" data-t="warm">2 Warm-up<small>Eye Test</small></button>
+<button class="tab" data-t="bj">3 Blackjack<small>Activity</small></button>
+<span style="flex:1"></span><span class="note">Simulated images &mdash; noise exaggerated for projection. Offline file.</span></header>
+<main>
+<!-- HOOK -->
+<section id="hook" class="on">
+  <div class="panels">
+    <div class="col"><canvas id="hkFilm" width="768" height="768" style="width:400px;height:400px"></canvas><div class="tag">Film</div></div>
+    <div class="col"><canvas id="hkDR" width="768" height="768" style="width:400px;height:400px"></canvas><div class="tag">Digital (DR)</div></div>
+  </div>
+  <div class="row" style="margin-top:6px">
+    <span class="big">Exposure:</span>
+    <button class="sec hkb" data-r="0.25">&frac14;&times;</button>
+    <button class="sec hkb" data-r="1">1&times;</button>
+    <button class="hkb" data-r="4">4&times;</button>
+    <span class="note" style="align-self:center">Keys: <kbd>1</kbd> &frac14;&times; <kbd>2</kbd> 1&times; <kbd>3</kbd> 4&times;</span>
+  </div>
+  <div class="cap" style="font-size:18px">Same chest, same mistake. Which patient got the extra radiation?</div>
+</section>
+<!-- WARM-UP -->
+<section id="warm">
+  <div class="status big">Activity 1 &mdash; Radiologist Eye Test: hold up fingers (1-4)</div>
+  <div class="panels" id="wpan"></div>
+  <div class="btns row" style="margin-top:10px">
+    <button id="wLow">Reveal lowest <kbd>1</kbd></button>
+    <button id="wAll">Reveal all <kbd>2</kbd></button>
+    <button class="sec" id="wReset">Reset <kbd>R</kbd></button>
+  </div>
+  <div class="punch" id="wPunch" style="display:none">Grain tells you when you gave <b>too little</b>. Nothing tells you when you gave <b>too much</b>.</div>
+</section>
+<!-- BLACKJACK -->
+<section id="bj">
+  <div id="bjRules">
+    <h1>X-ray Blackjack</h1>
+    <div class="goal">Make your image match the <b style="color:var(--amber)">IDEAL</b> as closely as you can, using as <b>little dose</b> as possible.</div>
+    <div class="rgrid">
+      <div>
+        <div class="rule"><b class="n">1</b><span>Both teams start from the <b>same grainy image</b>. The ideal image stays on screen.</span></div>
+        <div class="rule"><b class="n">2</b><span>Each round your team plays <b>one multiplier card</b>. It multiplies your exposure: new image, more dose. Both teams see every image.</span></div>
+        <div class="rule"><b class="n">3</b><span><b>No copying:</b> the card the first team plays is blocked for the second team that round. The first pick alternates.</span></div>
+        <div class="rule"><b class="n">4</b><span>Up to <b>4 rounds</b>. Say <b>STAND</b> when you think you are close enough. The other team <b>keeps playing</b> its remaining rounds, so standing early gains nothing.</span></div>
+        <div class="rule"><b class="n">5</b><span>Your <b>last image</b> is your submission, not your best one.</span></div>
+      </div>
+      <div>
+        <div class="rbox"><h3>Scoring</h3><div class="big">Score = Quality &times; 2 &minus; Dose</div>Quality stays <b>hidden</b> until the end: judge it with your eyes. Higher score wins.</div>
+        <div class="rbox"><h3>Cards</h3>Each card multiplies your own exposure.<div class="chips"><span>&times;&#8537;</span><span>&times;&frac14;</span><span>&times;&#8531;</span><span>&times;&frac12;</span><span>&times;2</span><span>&times;3</span><span>&times;4</span><span>&times;6</span></div></div>
+        <div class="rbox"><h3>Dose bar</h3>Relative, no numbers. Green &rarr; amber &rarr; red. When it is full, you are stopped.<div class="bar3"><i style="background:var(--green)"></i><i style="background:var(--amber)"></i><i style="background:var(--red)"></i></div></div>
+      </div>
+    </div>
+    <button id="proceed">Proceed to play &#9654;</button>
+    <div class="proceedhint">or press <kbd>Enter</kbd></div>
+  </div>
+  <div id="bjGame" style="display:none">
+    <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div></div>
+    <div class="grid3">
+      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:276px;height:276px"></canvas>
+        <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
+        <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
+      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:276px;height:276px"></canvas>
+        <div class="roundbig" id="roundInfo">Match this image with as little dose as possible</div></div>
+      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:276px;height:276px"></canvas>
+        <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
+        <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
+    </div>
+    <div id="coinbar"><span>Who picks first in round 1?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">Flip a coin</button><button class="sec" id="coinR">Team Right</button></div>
+    <div id="cards"></div>
+    <div class="btns">
+      <button id="standBtn" class="sec">STAND <kbd>S</kbd></button>
+      <button class="sec" id="undo">Undo <kbd>U</kbd></button>
+      <button id="reveal">Reveal <kbd>V</kbd></button>
+      <button class="sec" id="rulesBtn">Rules</button>
+      <button class="sec" id="newgame">New game <kbd>N</kbd></button>
+    </div>
+  </div>
+  <div id="revealbox"></div>
+</section>
+</main>
+<script>/*ENGINE*/</script>
+<script>
+const BASE_B64="/*BASE64*/";
+const N=768;
+let BASE=null, baseImg=new Image();
+const $=s=>document.querySelector(s);
+function mk(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
+function toCanvas(gray,n){const c=mk(n,n),x=c.getContext('2d'),id=x.createImageData(n,n);for(let i=0;i<n*n;i++){const v=gray[i];id.data[i*4]=v;id.data[i*4+1]=v;id.data[i*4+2]=v;id.data[i*4+3]=255}x.putImageData(id,0,0);return c}
+function drawTo(el,src){const x=el.getContext('2d');x.drawImage(src,0,0,el.width,el.height)}
+const drCache={};
+function drImg(r,seed){const k=r.toFixed(5)+'_'+seed;if(!drCache[k])drCache[k]=toCanvas(Engine.renderDR(BASE,N,r,seed),N);return drCache[k]}
+const filmCache={};
+function filmImg(r){const k=r.toFixed(5);if(!filmCache[k])filmCache[k]=toCanvas(Engine.renderFilm(BASE,N,r),N);return filmCache[k]}
+
+// tabs
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.t));
+function showTab(t){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===t));cur=t}
+let cur='hook';
+
+// HOOK
+let hkR=4;
+function hook(r){hkR=r;drawTo($('#hkFilm'),filmImg(r));drawTo($('#hkDR'),drImg(r,11));document.querySelectorAll('.hkb').forEach(b=>b.classList.toggle('sec',+b.dataset.r!==r))}
+document.querySelectorAll('.hkb').forEach(b=>b.onclick=()=>hook(+b.dataset.r));
+
+// WARM-UP
+const WARM=[1,0.25,3,0.5];
+let wShown=0;
+function warmBuild(){
+  const p=$('#wpan');p.innerHTML='';
+  WARM.forEach((r,i)=>{const d=document.createElement('div');d.className='col';d.innerHTML='<canvas width="768" height="768" style="width:300px;height:300px"></canvas><div class="tag" id="wt'+i+'">'+(i+1)+'</div><div class="mini" style="visibility:hidden" id="wm'+i+'"><i></i></div>';p.appendChild(d);drawTo(d.querySelector('canvas'),drImg(r,100+i))});
+}
+function fmt(r){return r<1?(r===0.25?'¼':r===0.5?'½':r.toFixed(2)):String(r)}
+function wLow(){wShown=Math.max(wShown,1);const i=WARM.indexOf(Math.min(...WARM));const t=$('#wt'+i);t.className='tag lo';t.textContent=(i+1)+' — lowest dose ('+fmt(WARM[i])+'×)'}
+function wAll(){wShown=2;WARM.forEach((r,i)=>{const t=$('#wt'+i);t.className='tag'+(r===Math.min(...WARM)?' lo':'');t.textContent=(i+1)+' — '+fmt(r)+'×';const m=$('#wm'+i);m.style.visibility='visible';m.firstChild.style.width=(r/3*100)+'%'});$('#wPunch').style.display='block'}
+function wReset(){wShown=0;warmBuild();$('#wPunch').style.display='none'}
+$('#wLow').onclick=wLow;$('#wAll').onclick=wAll;$('#wReset').onclick=wReset;
+
+// BLACKJACK
+const E=Engine;
+let S=null,stack=[];
+function newState(){return{round:1,first:null,order:null,pos:0,usedCard:null,over:false,
+  T:{L:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],seeds:[7],stand:false,stopped:false},R:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],seeds:[7],stand:false,stopped:false}}}}
+function snap(){stack.push(JSON.stringify(S))}
+function hideReveal(){$('#revealbox').style.display='none';if(typeof rulesOn==='undefined'||!rulesOn)$('#bjGame').style.display='block'}
+function bjNew(){S=newState();stack=[];hideReveal();$('#reveal').style.display='none';bjRender()}
+function active(t){return !S.T[t].stand&&!S.T[t].stopped}
+function curTeam(){if(S.over||!S.first)return null;return S.order[S.pos]}
+function advance(){
+  // move to next active actor; handle round/game end
+  for(let guard=0;guard<10;guard++){
+    if(S.pos>=2){S.round++;S.pos=0;S.usedCard=null;S.order=[S.first,S.first==='L'?'R':'L'];S.first=S.order[1];S.order=[S.first,S.first==='L'?'R':'L'];}
+    if(S.round>4||(!active('L')&&!active('R'))){S.over=true;return}
+    if(active(S.order[S.pos]))return;
+    S.pos++;
+  }
+}
+function setFirst(t){if(S.first||S.over)return;snap();S.first=t;S.order=[t,t==='L'?'R':'L'];S.pos=0;advance();bjRender()}
+function playCard(ci){
+  const t=curTeam();if(!t)return;
+  if(S.pos===1&&S.usedCard===ci)return; // no copying
+  snap();const T=S.T[t];
+  T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.seeds.push(S.round*10+(t==='L'?1:2));
+  if(S.pos===0)S.usedCard=ci;
+  if(T.D>=E.LIMIT)T.stopped=true;
+  S.pos++;advance();bjRender();
+}
+function doStand(){const t=curTeam();if(!t)return;snap();S.T[t].stand=true;S.pos++;advance();bjRender()}
+function bjUndo(){if(!stack.length)return;S=JSON.parse(stack.pop());hideReveal();bjRender()}
+function bar(t){const T=S.T[t];const f=Math.min(1,T.D/E.LIMIT);const el=$('#d'+t);el.style.width=(f*100)+'%';el.style.background=f<.5?'var(--green)':f<.85?'var(--amber)':'var(--red)'}
+function bjRender(){
+  ['L','R'].forEach(t=>{const T=S.T[t];drawTo($('#c'+t),drImg(T.r,T.seeds[T.seeds.length-1]));
+    const h=$('#h'+t);h.innerHTML='';T.hist.forEach((r,i)=>{const c=mk(120,120);drawTo(c,drImg(r,T.seeds[i]));h.appendChild(c)});
+    bar(t);$('#t'+t).className='team'+(curTeam()===t?' act':'')+((T.stand||T.stopped)?' stand':'')});
+  drawTo($('#cI'),baseImg);
+  const t=curTeam();let msg;
+  if(!S.first)msg='Flip a coin: who picks first in round 1?';
+  else if(S.over)msg='Game over — press Reveal';
+  else{const o=t==='L'?'R':'L',nm=x=>x==='L'?'Team Left':'Team Right';
+    if(S.T[o].stand||S.T[o].stopped)msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' keeps playing ('+nm(o)+(S.T[o].stand?' stood':' hit the dose limit')+')';
+    else msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' to play'+(S.pos===1?' (second pick)':' (first pick)')}
+  $('#bjStatus').textContent=msg;
+  $('#roundPill').textContent=S.over?'Game over':'Round '+Math.min(S.round,4)+' / 4';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this image with as little dose as possible':'Match this image with as little dose as possible');
+  ['L','R'].forEach(x=>{if(S.T[x].stopped&&!S.T[x].stand&&!S.over){}});
+  const cards=$('#cards');cards.innerHTML='';
+  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||(S.pos===1&&S.usedCard===i))?' used':'');b.textContent=l;b.onclick=()=>playCard(i);cards.appendChild(b)});
+  $('#standBtn').disabled=!t;$('#coinbar').style.display=S.first?'none':'flex';
+  $('#reveal').style.display=S.over?'':'none';
+}
+function reveal(){
+  if(!S.over)return;
+  const sc={};
+  ['L','R'].forEach(t=>{const T=S.T[t];const Q=E.quality(T.r);sc[t]={Q,D:T.D,score:2*Q-T.D}});
+  const win=sc.L.score===sc.R.score?'Tie':(sc.L.score>sc.R.score?'L':'R');
+  let h='<div class="rv">';
+  ['L','R'].forEach(t=>{const T=S.T[t];
+    h+='<div class="rvteam"><h2 class="'+(win===t?'win':'')+'">'+(t==='L'?'Team Left':'Team Right')+(win===t?' ★ WINNER':'')+'</h2><div class="imgs" id="ri'+t+'"></div><div>Quality <b>'+sc[t].Q.toFixed(1)+'</b> × 2 − Dose <b>'+sc[t].D.toFixed(1)+'</b></div><div class="score '+(win===t?'win':'')+'">'+sc[t].score.toFixed(1)+'</div><div class="note">Submitted: '+(T.r*100).toFixed(0)+'% of ideal exposure, DI '+(E.di(T.r)>=0?'+':'')+E.di(T.r).toFixed(1)+'</div></div>'});
+  h+='</div><div class="punch">They can look the same. Only the <b>Deviation Index (DI)</b> shows who gave more exposure. DI +3 &asymp; 2&times; the exposure.</div><div class="btns" style="margin-top:8px"><button class="sec" id="rvBack">&#9664; Back to game</button><button id="rvNew">New game</button></div>';
+  const rb=$('#revealbox');rb.innerHTML=h;rb.style.display='block';
+  ['L','R'].forEach(t=>{const T=S.T[t],box=$('#ri'+t);T.hist.forEach((r,i)=>{const d=document.createElement('div');d.className='im';const c=mk(200,200);drawTo(c,drImg(r,T.seeds[i]));d.appendChild(c);const di=E.di(r);d.appendChild(document.createTextNode((r*100).toFixed(0)+'% · DI '+(di>=0?'+':'')+di.toFixed(1)));box.appendChild(d)})});
+  $('#bjGame').style.display='none';$('#rvBack').onclick=hideReveal;$('#rvNew').onclick=bjNew;
+}
+$('#coinL').onclick=()=>setFirst('L');$('#coinR').onclick=()=>setFirst('R');$('#coinF').onclick=()=>setFirst(Math.random()<.5?'L':'R');
+let rulesOn=true;
+function showRules(on){rulesOn=on;$('#bjRules').style.display=on?'block':'none';$('#bjGame').style.display=on?'none':'block'}
+$('#proceed').onclick=()=>showRules(false);$('#rulesBtn').onclick=()=>showRules(true);
+$('#standBtn').onclick=doStand;$('#undo').onclick=bjUndo;$('#reveal').onclick=reveal;$('#newgame').onclick=bjNew;
+
+document.addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(cur==='hook'){if(k==='1')hook(0.25);if(k==='2')hook(1);if(k==='3')hook(4)}
+  else if(cur==='warm'){if(k==='1')wLow();if(k==='2')wAll();if(k==='r')wReset()}
+  else if(cur==='bj'&&rulesOn){if(k==='enter'||k===' ')showRules(false)}
+  else if(cur==='bj'){
+    if(k>='1'&&k<='8')playCard(+k-1);else if(k==='s')doStand();else if(k==='u')bjUndo();else if(k==='v')reveal();else if(k==='n')bjNew();
+    else if(k==='l'&&!S.first)setFirst('L');else if(k==='r'&&!S.first)setFirst('R');else if(k==='f'&&!S.first)setFirst(Math.random()<.5?'L':'R');
+  }
+  if(k==='f1'){e.preventDefault()}
+});
+
+baseImg=mk(N,N);
+const im=new Image();
+im.onload=()=>{
+  const c=mk(N,N),x=c.getContext('2d');x.drawImage(im,0,0,N,N);const d=x.getImageData(0,0,N,N).data;
+  BASE=new Float32Array(N*N);for(let i=0;i<N*N;i++)BASE[i]=d[i*4]/255;
+  baseImg=toCanvas(BASE.map(v=>v*255),N);
+  hook(4);warmBuild();bjNew();
+  const p=new URLSearchParams(location.search);if(p.get('tab'))showTab(p.get('tab'));
+  const dm=p.get('demo');if(dm){showRules(false);setFirst('R');if(dm>='1')playCard(5);if(dm>='2'){playCard(6);playCard(4);playCard(3)}if(dm>='3'){doStand();doStand();reveal()}}
+};
+im.src='data:image/jpeg;base64,'+BASE_B64;
+</script></body></html>

@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Test the Blackjack scoring engine
+        run: node _build/test_engine.js
+
+      - name: Check the lab is fully offline (no external URLs)
+        run: |
+          if grep -Eq 'src="https?://|href="https?://|url\(https?://' DR_Lab.html; then
+            echo "DR_Lab.html references an external resource"; exit 1
+          fi
+
+      - name: Assemble site
+        run: |
+          mkdir _site
+          cp site/index.html _site/index.html
+          cp DR_Lab.html DR_Overview.pdf DR_Overview.pptx _site/
+          cp Knowledge_Guide.docx Script_EN_VI.docx _site/
+          cp Knowledge_Guide.md Script_EN_VI.md Rehearsal_Checklist.md sources.md _site/
+          touch _site/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

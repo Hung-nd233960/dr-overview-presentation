@@ -60,8 +60,8 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .roundbig{font-size:17px;color:var(--mute);margin-top:12px;min-height:56px;display:flex;align-items:center;justify-content:center}
 #coinbar{display:none;justify-content:center;align-items:center;gap:14px;margin:16px 0 4px;font-size:21px}
 #coinbar button{font-size:19px}
-#cards{display:flex;gap:14px;justify-content:center;margin:4px 0 8px}
-#cardnote{text-align:center;font-size:16px;color:var(--mute);margin-top:8px}
+#cards{display:flex;gap:14px;justify-content:center;margin:0 0 14px}
+#cardnote{text-align:center;font-size:16px;color:var(--mute);margin:10px 0 12px}
 #cardnote b{color:var(--amber)}
 .card{width:96px;height:50px;font-size:28px;border-radius:12px;background:#f4f7fb;color:#12304a;border:3px solid #fff;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:0 3px 10px rgba(0,0,0,.35)}
 .card:hover:not(.used){transform:translateY(-4px);box-shadow:0 8px 16px rgba(0,0,0,.45)}
@@ -171,14 +171,14 @@ button kbd{color:var(--ink)}
   <div id="bjGame" style="display:none">
     <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div><span class="clock" id="tClock"><small>TURN</small>30</span><span class="clock" id="gClock"><small>GAME</small>3:00</span></div><div id="toast"></div>
     <div class="grid3">
-      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:204px;height:204px"></canvas>
+      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:196px;height:196px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
-      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:204px;height:204px"></canvas>
+      <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:196px;height:196px"></canvas>
         <div class="roundbig">Where both teams began</div></div>
-      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:204px;height:204px"></canvas>
+      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:196px;height:196px"></canvas>
         <div class="roundbig" id="roundInfo">Match this image with as little dose as possible</div></div>
-      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:204px;height:204px"></canvas>
+      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:196px;height:196px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>

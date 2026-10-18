@@ -116,10 +116,10 @@ Aims: (1) patients exposed to minimum radiation, **ALARA**; (2) **optimum image 
 
 - **Noise model**: relative quantum noise ∝ 1/√photons, so image noise σ(r) = 0.12·(1/√r − 1) in our simulation (zero at r ≥ 1). This is a teaching simplification and is **exaggerated for projection**.
 - **Quality** Q(r) = 100·√r for r < 1 (SNR ∝ √exposure); 100 for 1 ≤ r ≤ 4 (already diagnostic); falls slowly above 4× (detector saturation).
-- **Cards chain:** each card multiplies the team's *last* scan, so ×6 then ×3 = ×18 of the start. This makes the game less predictable than a lookup of "initial × card" and keeps the fractional cards useful for correcting an overshoot. The **START image** appears as a reference column once any team has played, and each team's **history** shows the multiplier used under every image.
+- **Cards chain:** each card multiplies the team's *last* scan, so ×6 then ×1.5 = ×9 of the start. This makes the game less predictable than a lookup of "initial × card" and keeps the fractional cards useful for correcting an overshoot. The **START image** appears as a reference column once any team has played, and each team's **history** shows the multiplier used under every image.
 - **Dose** per exposure = 10·r, **+3** fixed cost per retake (repositioning, time, extra exposure). The +3 stops "deliberately under-expose first" from being a free strategy.
-- **Why no exact 1× route exists**: the start is 1/8.33 ≈ 0.12× and the cards are ×⅙, ¼, ⅓, ½, 2, 3, 4, 6. The best route is ×3 → ×3 = 1.08× (score 178.4).
-- **Verified top 3 routes** (exhaustive simulation of all sequences ≤ 4 cards, script in `_build/test_engine.js`): **×3 → ×3 = 178.4**, ×¼ → ×6 → ×6 = 176.9, ×2 → ×4 = 176.8.
+- **Why no exact 1× route exists**: the start is 1/8.33 ≈ 0.12× and the cards are ×⅙, ¼, ⅓, ½, 1.5, 2, 3, 4, 6. The best route is ×1.5 → ×6 = 1.08× (score 180.2); ×3 → ×3 reaches the same image for 178.4. **Order matters:** ×6 → ×1.5 reaches the same ×9 but scores only 174.8, because the intermediate scan costs more dose.
+- **Verified top 3 routes** (exhaustive simulation of all sequences ≤ 4 cards, script in `_build/test_engine.js`): **×1.5 → ×6 = 180.2**, ×3 → ×3 = 178.4, ×¼ → ×6 → ×6 = 176.9 (then ×2 → ×4 = 176.8).
 - **Real limit of the model**: real SNR keeps rising with dose, but diagnostic value does not; the cap at 1× is a deliberate simplification.
 
 ## 14. Errata and cautions (do not repeat these as fact)

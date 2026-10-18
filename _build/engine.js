@@ -4,8 +4,8 @@
   const R0 = 1 / 8.33;          // hidden start exposure (fraction of ideal)
   const RETAKE = 3;             // fixed per-retake dose cost
   const LIMIT = 50;             // dose limit
-  const CARDS = [1 / 6, 1 / 4, 1 / 3, 1 / 2, 2, 3, 4, 6];
-  const CARD_LABELS = ['×⅙', '×¼', '×⅓', '×½', '×2', '×3', '×4', '×6'];
+  const CARDS = [1 / 6, 1 / 4, 1 / 3, 1 / 2, 1.5, 2, 3, 4, 6];
+  const CARD_LABELS = ['×⅙', '×¼', '×⅓', '×½', '×1.5', '×2', '×3', '×4', '×6'];
   const SIGMA0 = 0.12;          // noise constant (full-scale units)
 
   function quality(r) {

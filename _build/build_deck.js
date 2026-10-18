@@ -231,7 +231,7 @@ function band(s, y, h, text, fill = NAVY, color = WHITE, size = 20) {
 // ---------- 11 BLACKJACK ----------
 {
   const s = base('Activity 2: X-ray Blackjack', 'Images: simulated by the group from a CC0 chest radiograph (Wikimedia Commons); simplified model: noise ∝ 1/√photons, dose ∝ mAs (Seeram §1.3.5-1.3.6). DR_Lab.html, tab 3.',
-    'D hosts; A clicks cards, B referees, C collects Team Left votes. Split the room into Team Left and Team Right, each with a captain. Both teams start from the same grainy image; the ideal image is always on screen. Each round, a team plays a multiplier card on its own last scan, so cards chain (x6 then x3 = x18 of the start). The new image appears for both teams, so they compare; once anyone has played, the START image appears as a reference column. The first team\'s card is blocked for the second team that round. First pick alternates (the Random button decides round 1). Clocks: 30 seconds per turn (timeout means that team stands) and 3 minutes for the whole game (when it ends both teams stand). Up to 4 rounds or STAND; a team that stands is out, but the other team keeps playing all its remaining rounds, so standing early gives no advantage. The last image is the submission. Score = Quality x 2 minus Dose; quality is hidden until the reveal, dose is the bar. About 25 s per round. Then press Reveal and hand to slide 12.');
+    'D hosts; A clicks cards, B referees, C collects Team Left votes. Split the room into Team Left and Team Right, each with a captain. Both teams start from the same grainy image; the ideal image is always on screen. Each round, a team plays a multiplier card on its own last scan, so cards chain (x6 then x1.5 = x9 of the start). The new image appears for both teams, so they compare; once anyone has played, the START image appears as a reference column. The first team\'s card is blocked for the second team that round. First pick alternates (the Random button decides round 1). Clocks: 30 seconds per turn (timeout means that team stands) and 3 minutes for the whole game (when it ends both teams stand). Up to 4 rounds or STAND; a team that stands is out, but the other team keeps playing all its remaining rounds, so standing early gives no advantage. The last image is the submission. Score = Quality x 2 minus Dose; quality is hidden until the reveal, dose is the bar. About 25 s per round. Then press Reveal and hand to slide 12.');
   box(s, 0.5, 1.3, 2.6, 0.55, 'ACTIVITY 2  ·  3 min', { fill: AMB, size: 16, bold: true });
   box(s, 3.35, 1.3, 3.15, 0.55, '30 s per turn \u00B7 3:00 total', { fill: PALE, size: 16, bold: true, color: NAVY });
   const rules = ['Both teams start from the same grainy image.', 'Each round: play a × card. It multiplies your last scan, so cards chain.', 'No copying: the first team’s card is blocked for the second.', 'Up to 4 rounds, or STAND (timeout = STAND). Last image counts.'];
@@ -242,9 +242,9 @@ function band(s, y, h, text, fill = NAVY, color = WHITE, size = 20) {
   s.addImage({ path: FIG + 'ideal.png', x: 10.25, y: 1.3, w: 2.58, h: 2.58 });
   txt(s, 'Start: both teams', 7.0, 4.05, 2.7, 0.4, { size: 15, align: 'center', color: MUTE });
   txt(s, 'Ideal', 10.25, 4.05, 2.58, 0.4, { size: 15, align: 'center', color: MUTE });
-  ['×⅙', '×¼', '×⅓', '×½', '×2', '×3', '×4', '×6'].forEach((t, i) => box(s, 7.0 + i * 0.73, 4.7, 0.65, 0.6, t, { fill: WHITE, line: NAVY, size: 18, bold: true, margin: 0 }));
+  ['×⅙', '×¼', '×⅓', '×½', '×1.5', '×2', '×3', '×4', '×6'].forEach((t, i) => box(s, 7.0 + i * 0.66, 4.7, 0.6, 0.6, t, { fill: WHITE, line: NAVY, size: 15, bold: true, margin: 0 }));
   txt(s, 'Cards chain on your last scan', 7.0, 5.45, 5.8, 0.35, { size: 15, bold: true, color: NAVY });
-  const rowsD = [['start', 1, AMB, '1'], ['play \u00D76', 6, TEAL, '= 6 \u00D7 start'], ['then \u00D73', 18, TEAL, '= 18 \u00D7 start']];
+  const rowsD = [['start', 1, AMB, '1'], ['play \u00D76', 6, TEAL, '= 6 \u00D7 start'], ['then \u00D71.5', 9, TEAL, '= 9 \u00D7 start']];
   rowsD.forEach((r, i) => {
     const y = 5.85 + i * 0.36;
     txt(s, r[0], 7.0, y - 0.03, 1.3, 0.3, { size: 14, color: MUTE, valign: 'middle' });

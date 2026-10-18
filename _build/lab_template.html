@@ -43,19 +43,26 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .team.stand h2::after{content:'  \00B7 done';color:var(--mute);font-size:16px;font-weight:600}
 .ideal h2{color:var(--amber)}
 .team canvas,.ideal canvas{margin:0 auto;border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,.45)}
-.row2{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;min-height:56px}
+.row2{display:flex;align-items:flex-start;justify-content:center;gap:10px;margin-top:8px}
+.row2 .lbl{margin-top:16px}
 .lbl{font-size:14px;color:var(--mute);min-width:52px;text-align:right}
-.hist{display:flex;gap:6px;justify-content:flex-start;align-items:center}
+.hist{display:grid;grid-template-columns:repeat(3,58px);gap:4px 10px;justify-content:start}
+.hi{display:flex;flex-direction:column;align-items:center}
+.hi span{font-size:14px;font-weight:800;color:var(--ink);margin-top:1px;line-height:1.15}
+.hi.last canvas{border-color:var(--teal)}
+.hi.last span{color:var(--teal)}
 .hist canvas{width:50px;height:50px;border:2px solid #2c4468;border-radius:5px;box-shadow:none}
-.hist canvas:last-child{border-color:var(--teal)}
+
 .dosewrap{display:flex;align-items:center;gap:10px;margin-top:10px}
 .dose{flex:1;height:20px;border-radius:10px;background:#0a1322;overflow:hidden;border:1px solid #2c4468}
 .dose i{display:block;height:100%;width:0;background:var(--green);transition:width .5s,background .3s}
 .roundbig{font-size:17px;color:var(--mute);margin-top:12px;min-height:56px;display:flex;align-items:center;justify-content:center}
 #coinbar{display:none;justify-content:center;align-items:center;gap:14px;margin:16px 0 4px;font-size:21px}
 #coinbar button{font-size:19px}
-#cards{display:flex;gap:14px;justify-content:center;margin:16px 0 10px}
-.card{width:96px;height:68px;font-size:32px;border-radius:12px;background:#f4f7fb;color:#12304a;border:3px solid #fff;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+#cards{display:flex;gap:14px;justify-content:center;margin:4px 0 8px}
+#cardnote{text-align:center;font-size:16px;color:var(--mute);margin-top:8px}
+#cardnote b{color:var(--amber)}
+.card{width:96px;height:50px;font-size:28px;border-radius:12px;background:#f4f7fb;color:#12304a;border:3px solid #fff;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:0 3px 10px rgba(0,0,0,.35)}
 .card:hover:not(.used){transform:translateY(-4px);box-shadow:0 8px 16px rgba(0,0,0,.45)}
 .card.used{background:#3a4658;color:#6c7a90;border-color:#3a4658;text-decoration:line-through;cursor:not-allowed;box-shadow:none}
 #bj .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
@@ -71,6 +78,11 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .rbox .big{font-size:24px;color:var(--ink)}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .chips span{background:#f4f7fb;color:#12304a;border-radius:8px;padding:2px 9px;font-weight:800;font-size:19px}
+.mdiag{margin-top:8px;font-size:15px}
+.mdiag div{display:flex;align-items:center;gap:8px;margin-top:3px}
+.mdiag em{width:82px;font-style:normal;color:var(--mute)}
+.mdiag i{display:block;height:12px;background:var(--teal);border-radius:3px}
+.mdiag u{text-decoration:none;color:var(--ink);font-weight:700}
 .bar3{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:8px}
 .bar3 i{flex:1}
 #proceed{display:block;margin:6px auto 0;font-size:24px;padding:10px 40px}
@@ -140,7 +152,7 @@ button kbd{color:var(--ink)}
     <div class="rgrid">
       <div>
         <div class="rule"><b class="n">1</b><span>Both teams start from the <b>same grainy image</b>. The ideal image stays on screen.</span></div>
-        <div class="rule"><b class="n">2</b><span>Each round your team plays <b>one multiplier card</b>. It multiplies your exposure: new image, more dose. Both teams see every image.</span></div>
+        <div class="rule"><b class="n">2</b><span>Each round your team plays <b>one multiplier card</b>. Your new scan = the <b>initial scan &times; card</b> (not your last scan &times; card): new image, more dose.</span></div>
         <div class="rule"><b class="n">3</b><span><b>No copying:</b> the card the first team plays is blocked for the second team that round. The first pick alternates.</span></div>
         <div class="rule"><b class="n">4</b><span>Up to <b>4 rounds</b>. Say <b>STAND</b> when you think you are close enough. The other team <b>keeps playing</b> its remaining rounds, so standing early gains nothing.</span></div>
         <div class="rule"><b class="n">5</b><span>Your <b>last image</b> is your submission, not your best one.</span></div>
@@ -148,7 +160,7 @@ button kbd{color:var(--ink)}
       </div>
       <div>
         <div class="rbox"><h3>Scoring</h3><div class="big">Score = Quality &times; 2 &minus; Dose</div>Quality stays <b>hidden</b> until the end: judge it with your eyes. Higher score wins.</div>
-        <div class="rbox"><h3>Cards</h3>Each card multiplies your own exposure.<div class="chips"><span>&times;&#8537;</span><span>&times;&frac14;</span><span>&times;&#8531;</span><span>&times;&frac12;</span><span>&times;2</span><span>&times;3</span><span>&times;4</span><span>&times;6</span></div></div>
+        <div class="rbox"><h3>Cards: multiples of the initial scan</h3><div class="chips"><span>&times;2</span><span>&times;3</span><span>&times;4</span><span>&times;6</span><span>&times;8</span><span>&times;10</span><span>&times;15</span><span>&times;40</span></div><div class="mdiag"><div><em>initial</em><i style="width:8px;background:var(--amber)"></i><u>1</u></div><div><em>play &times;6</em><i style="width:48px"></i><u>6 &times; initial</u></div><div><em>then &times;10</em><i style="width:80px"></i><u>10 &times; initial (not 60)</u></div></div></div>
         <div class="rbox"><h3>Dose bar</h3>Relative, no numbers. Green &rarr; amber &rarr; red. When it is full, you are stopped.<div class="bar3"><i style="background:var(--green)"></i><i style="background:var(--amber)"></i><i style="background:var(--red)"></i></div></div>
       </div>
     </div>
@@ -158,16 +170,17 @@ button kbd{color:var(--ink)}
   <div id="bjGame" style="display:none">
     <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div><span class="clock" id="tClock"><small>TURN</small>30</span><span class="clock" id="gClock"><small>GAME</small>3:00</span></div><div id="toast"></div>
     <div class="grid3">
-      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:276px;height:276px"></canvas>
+      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:204px;height:204px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
-      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:276px;height:276px"></canvas>
+      <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:204px;height:204px"></canvas>
         <div class="roundbig" id="roundInfo">Match this image with as little dose as possible</div></div>
-      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:276px;height:276px"></canvas>
+      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:204px;height:204px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>
     <div id="coinbar"><span>Who picks first in round 1?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
+    <div id="cardnote">Each card multiplies the <b>initial</b> scan, not your last scan</div>
     <div id="cards"></div>
     <div class="btns">
       <button id="standBtn" class="sec">STAND <kbd>S</kbd></button>
@@ -221,7 +234,7 @@ $('#wLow').onclick=wLow;$('#wAll').onclick=wAll;$('#wReset').onclick=wReset;
 const E=Engine;
 let S=null,stack=[];
 function newState(){return{round:1,first:null,order:null,pos:0,usedCard:null,over:false,
-  T:{L:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],seeds:[7],stand:false,stopped:false},R:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],seeds:[7],stand:false,stopped:false}}}}
+  T:{L:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],cards:['start'],seeds:[7],stand:false,stopped:false},R:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],cards:['start'],seeds:[7],stand:false,stopped:false}}}}
 function snap(){stack.push(JSON.stringify(S))}
 function hideReveal(){$('#revealbox').style.display='none';if(typeof rulesOn==='undefined'||!rulesOn)$('#bjGame').style.display='block'}
 function bjNew(){S=newState();stack=[];clocksReset();hideReveal();bjRender()}
@@ -242,7 +255,7 @@ function playCard(ci){
   const t=curTeam();if(!t||paused)return;
   if(S.pos===1&&S.usedCard===ci)return; // no copying
   snap();const T=S.T[t];
-  T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.seeds.push(S.round*10+(t==='L'?1:2));
+  T.r=E.R0*E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(S.round*10+(t==='L'?1:2));
   if(S.pos===0)S.usedCard=ci;
   if(T.D>=E.LIMIT)T.stopped=true;
   S.pos++;advance();bjRender();
@@ -252,7 +265,7 @@ function bjUndo(){if(!stack.length)return;S=JSON.parse(stack.pop());hideReveal()
 function bar(t){const T=S.T[t];const f=Math.min(1,T.D/E.LIMIT);const el=$('#d'+t);el.style.width=(f*100)+'%';el.style.background=f<.5?'var(--green)':f<.85?'var(--amber)':'var(--red)'}
 function bjRender(){
   ['L','R'].forEach(t=>{const T=S.T[t];drawTo($('#c'+t),drImg(T.r,T.seeds[T.seeds.length-1]));
-    const h=$('#h'+t);h.innerHTML='';T.hist.forEach((r,i)=>{const c=mk(120,120);drawTo(c,drImg(r,T.seeds[i]));h.appendChild(c)});
+    const h=$('#h'+t);h.innerHTML='';T.hist.forEach((r,i)=>{const w=document.createElement('div');w.className='hi'+(i===T.hist.length-1?' last':'');const c=mk(120,120);drawTo(c,drImg(r,T.seeds[i]));w.appendChild(c);const sp=document.createElement('span');sp.textContent=T.cards[i];w.appendChild(sp);h.appendChild(w)});
     bar(t);$('#t'+t).className='team'+(curTeam()===t?' act':'')+((T.stand||T.stopped)?' stand':'')});
   drawTo($('#cI'),baseImg);
   const t=curTeam();let msg;
@@ -279,7 +292,7 @@ function reveal(){
     h+='<div class="rvteam"><h2 class="'+(win===t?'win':'')+'">'+(t==='L'?'Team Left':'Team Right')+(win===t?' ★ WINNER':'')+'</h2><div class="imgs" id="ri'+t+'"></div><div>Quality <b>'+sc[t].Q.toFixed(1)+'</b> × 2 − Dose <b>'+sc[t].D.toFixed(1)+'</b></div><div class="score '+(win===t?'win':'')+'">'+sc[t].score.toFixed(1)+'</div><div class="note">Submitted: '+(T.r*100).toFixed(0)+'% of ideal exposure, DI '+(E.di(T.r)>=0?'+':'')+E.di(T.r).toFixed(1)+'</div></div>'});
   h+='</div><div class="punch">They can look the same. Only the <b>Deviation Index (DI)</b> shows who gave more exposure. DI +3 &asymp; 2&times; the exposure.</div><div class="btns" style="margin-top:8px"><button class="sec" id="rvBack">&#9664; Back to game</button><button id="rvNew">New game</button></div>';
   const rb=$('#revealbox');rb.innerHTML=h;rb.style.display='block';
-  ['L','R'].forEach(t=>{const T=S.T[t],box=$('#ri'+t);T.hist.forEach((r,i)=>{const d=document.createElement('div');d.className='im';const c=mk(200,200);drawTo(c,drImg(r,T.seeds[i]));d.appendChild(c);const di=E.di(r);d.appendChild(document.createTextNode((r*100).toFixed(0)+'% · DI '+(di>=0?'+':'')+di.toFixed(1)));box.appendChild(d)})});
+  ['L','R'].forEach(t=>{const T=S.T[t],box=$('#ri'+t);T.hist.forEach((r,i)=>{const d=document.createElement('div');d.className='im';const c=mk(200,200);drawTo(c,drImg(r,T.seeds[i]));d.appendChild(c);const di=E.di(r);d.appendChild(document.createTextNode((T.cards[i]==='start'?'start':T.cards[i])+' → '+(r*100).toFixed(0)+'% · DI '+(di>=0?'+':'')+di.toFixed(1)));box.appendChild(d)})});
   $('#bjGame').style.display='none';$('#rvBack').onclick=hideReveal;$('#rvNew').onclick=bjNew;
 }
 $('#coinL').onclick=()=>setFirst('L');$('#coinR').onclick=()=>setFirst('R');$('#coinF').onclick=spinFirst;
@@ -372,6 +385,7 @@ im.onload=()=>{
   baseImg=toCanvas(BASE.map(v=>v*255),N);
   hook(4);warmBuild();bjNew();
   const p=new URLSearchParams(location.search);if(p.get('tab'))showTab(p.get('tab'));
+  const pl=p.get('plays');if(pl&&!p.get('demo')){showRules(false);setFirst('L');pl.split(',').forEach(i=>playCard(+i))}
   const dm=p.get('demo');if(dm){showRules(false);setFirst('R');if(dm>='1')playCard(5);if(dm>='2'){playCard(6);playCard(4);playCard(3)}if(dm>='3'){doStand();doStand();reveal()}}
 };
 im.src='data:image/jpeg;base64,'+BASE_B64;

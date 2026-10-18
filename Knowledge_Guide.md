@@ -116,9 +116,11 @@ Aims: (1) patients exposed to minimum radiation, **ALARA**; (2) **optimum image 
 
 - **Noise model**: relative quantum noise ∝ 1/√photons, so image noise σ(r) = 0.12·(1/√r − 1) in our simulation (zero at r ≥ 1). This is a teaching simplification and is **exaggerated for projection**.
 - **Quality** Q(r) = 100·√r for r < 1 (SNR ∝ √exposure); 100 for 1 ≤ r ≤ 4 (already diagnostic); falls slowly above 4× (detector saturation).
-- **Dose** per exposure = 10·r, **+3** fixed cost per retake (repositioning, time, extra exposure). The +3 stops "deliberately under-expose first" from being a free strategy.
-- **Why no exact 1× route exists**: the start is 1/8.33 ≈ 0.12× and the cards are ×⅙, ¼, ⅓, ½, 2, 3, 4, 6. The best route is ×3 → ×3 = 1.08× (score 178.4).
-- **Verified top 3 routes** (exhaustive simulation of all sequences ≤ 4 cards, script in `_build/test_engine.js`): **×3 → ×3 = 178.4**, ×¼ → ×6 → ×6 = 176.9, ×2 → ×4 = 176.8.
+- **Dose** per scan = 10·r, **+3** fixed cost per retake (repositioning, time, extra exposure). The +3 stops "deliberately under-expose first" from being a free strategy.
+- **Cards multiply the INITIAL scan, not the previous one.** Each card is a fresh scan at r = r₀ × card (r₀ = 1/8.33 ≈ 0.12), so playing ×6 and then ×10 gives 10 × r₀ = 1.2, not 60 × r₀. Fractions (×½ and below) were removed: they could only make the image worse.
+- **Cards:** ×2, ×3, ×4, ×6, ×8, ×10, ×15, ×40 → r = 0.24, 0.36, 0.48, 0.72, 0.96, 1.20, 1.80, 4.80. ×2–×6 are visibly grainy; ×8 (r = 0.96, Q 98) and ×10 (r = 1.2, Q 100) land near the ideal; ×15 is **overexposure that looks identical** but costs more dose; ×40 also looks fine yet pushes dose past the limit (the team is stopped).
+- **Why no exact route exists**: the ideal needs ×8.33. ×8 is just under (small grain, Q 98), ×10 just over (clean, slightly more dose). Real trade-off.
+- **Verified single-scan scores** (exhaustive simulation of all sequences ≤ 4 cards, `_build/test_engine.js`): ×10 = **183.8**, ×8 = 182.2, ×15 = 177.8, ×6 = 158.3, ×40 = 137.2. Best multi-scan: ×2 → ×10 = 178.4 (the exploratory scan costs ≈ 5 points). Lesson: the cheapest route is to read the grain, then pick the smallest card that looks clean, in one scan.
 - **Real limit of the model**: real SNR keeps rising with dose, but diagnostic value does not; the cap at 1× is a deliberate simplification.
 
 ## 14. Errata and cautions (do not repeat these as fact)

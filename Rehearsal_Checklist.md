@@ -50,12 +50,12 @@ A→B end of slide 3 · B→C end of slide 6 · C→D end of slide 10 · D→A e
 ## Activity dry-run (do twice, with a timer)
 
 1. **Warm-up** (1:00): C asks lowest, D reveals; C asks highest, D reveals; punchline.
-2. **Blackjack** (2:30): split room, Random picks the first team, 4 rounds ≈ 25 s each, Reveal, punchline. Practise the "stand" and the "undo" key. Expected best route: ×3 then ×3 (score 178.4).
+2. **Blackjack** (2:30): split room, Random picks the first team, 4 rounds ≈ 25 s each, Reveal, punchline. Practise the "stand" and the "undo" key. Expected best play: a single ×10 (score 183.8), then ×8 (182.2). Overexposure traps: ×15 (looks fine, wasteful) and ×40 (looks fine, hits the dose limit).
 3. Check the debrief on slide 12 follows within 10 s.
 
 ## Backup plan
 
-- **HTML won't open**: slides 10 and 11 contain the four warm-up images and the start/ideal pair. Run Activity 1 from the slide; run Blackjack verbally with printed cards (×⅙ … ×6) and a hand tally of dose (cost = 10 × exposure + 3 per card).
+- **HTML won't open**: slides 10 and 11 contain the four warm-up images and the start/ideal pair. Run Activity 1 from the slide; run Blackjack verbally with printed cards (×2 … ×40) and a hand tally of dose (cost = 10 × the scan's exposure + 3, where the scan's exposure = initial × the card).
 - **No projector colour**: dose bar colours are also labelled by position (green/amber/red = 50% / 85%).
 - **Class too small for two teams**: one team of the whole room plays against the ideal; skip "no copy".
 - **Out of time**: shorten Blackjack to 3 rounds; cut slide 13 to one sentence.

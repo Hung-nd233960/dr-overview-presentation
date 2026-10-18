@@ -185,6 +185,36 @@ button kbd{color:var(--ink)}
 .card{color:#141a24}
 .card.red{color:#c9252d}
 .card.used,.card.red.used{color:#6c7a90}
+
+/* clock row: TIME LEFT + CURRENT SIDE, equal boxes side by side (no corner rings) */
+:root{--lc:#4aa3ff;--rc:#ff8a3d}
+.clockrow{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:flex;gap:10px;z-index:2}
+.cbox,.clockrow .gclock{position:relative;left:auto;bottom:auto;transform:none;width:208px;height:66px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#0a1322;border:2px solid #2c4468;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.45);overflow:hidden;color:var(--teal)}
+.cbox .cmain{display:flex;flex-direction:column;min-width:0}
+.cbox small{display:block;font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--mute);white-space:nowrap}
+.cbox b{display:block;font-size:38px;line-height:1.05;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.clockrow .gclock .hg{width:30px;height:30px}
+#sideBox[data-side=L] #sideTxt{color:var(--lc)}
+#sideBox[data-side=R] #sideTxt{color:var(--rc)}
+#sideBox[data-side=L]{border-color:var(--lc)}
+#sideBox[data-side=R]{border-color:var(--rc)}
+.sidesec{margin-left:auto;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink);align-self:flex-end;padding-bottom:9px}
+.sidebar{position:absolute;left:0;bottom:0;height:5px;width:0;background:var(--ink);transition:width .1s linear}
+#sideBox[data-side=L] .sidebar{background:var(--lc)}
+#sideBox[data-side=R] .sidebar{background:var(--rc)}
+#sideBox.warn{border-color:var(--amber)}
+#sideBox.warn .sidesec{color:var(--amber)}
+#sideBox.warn .sidebar{background:var(--amber)}
+#sideBox.crit{border-color:var(--red)}
+#sideBox.crit .sidesec{color:var(--red);animation:blink .5s infinite}
+#sideBox.crit .sidebar{background:var(--red)}
+.cbox.gclock.warn{border-color:var(--amber);color:var(--amber)}
+.cbox.gclock.crit{border-color:var(--red);color:var(--red)}
+/* team colours tie the panels to the CURRENT SIDE box */
+#tL h2{color:var(--lc)}
+#tR h2{color:var(--rc)}
+#tL.act:not(.warn):not(.crit){border-color:var(--lc);box-shadow:0 0 0 4px rgba(74,163,255,.25)}
+#tR.act:not(.warn):not(.crit){border-color:var(--rc);box-shadow:0 0 0 4px rgba(255,138,61,.25)}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -245,15 +275,15 @@ button kbd{color:var(--ink)}
     <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div></div><div id="toast"></div>
     <div id="cardnote"><span class="scorepill">Score = Quality &times; 2 &minus; Dose</span><span>Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;1.5 = &times;9 of the start)</span></div>
     <div class="grid3">
-      <div id="gClockBig" class="gclock"><span class="dot"></span><svg class="hg" viewBox="0 0 24 24" width="42" height="42"><path d="M6 2h12v4l-5 6 5 6v4H6v-4l5-6-5-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 5h7l-3.5 4.2z" fill="currentColor"/><path d="M8 19h8l-4-4.5z" fill="currentColor"/></svg><div><small>GAME CLOCK</small><b id="gTime">3:00</b></div></div>
-      <div class="team" id="tL"><div class="tbadge" id="tbL"><span>30</span></div><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:254px;height:254px"></canvas>
+      <div class="clockrow"><div id="gClockBig" class="cbox gclock"><span class="dot"></span><svg class="hg" viewBox="0 0 24 24" width="30" height="30"><path d="M6 2h12v4l-5 6 5 6v4H6v-4l5-6-5-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 5h7l-3.5 4.2z" fill="currentColor"/><path d="M8 19h8l-4-4.5z" fill="currentColor"/></svg><div class="cmain"><small>TIME LEFT</small><b id="gTime">3:00</b></div></div><div id="sideBox" class="cbox" data-side=""><div class="cmain"><small>CURRENT SIDE</small><b id="sideTxt">&ndash;</b></div><div class="sidesec" id="sideSec"></div><i class="sidebar" id="sideBar"></i></div></div>
+      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
       <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="roundbig">Where both teams began</div></div>
       <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="roundbig" id="roundInfo">Match this with the least dose</div></div>
-      <div class="team" id="tR"><div class="tbadge" id="tbR"><span>30</span></div><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:254px;height:254px"></canvas>
+      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:254px;height:254px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>
@@ -421,21 +451,21 @@ function clockDraw(){
   const live=!!(S&&S.first&&!S.over&&gEnd);
   const gl=live?gEnd-now:(gEnd?Math.max(0,gEnd-now):GLOBAL_MS);
   $('#gTime').textContent=fmt2(gEnd?gEnd-now:GLOBAL_MS);
-  $('#gClockBig').className='gclock'+(live&&!paused?' run':'')+(live&&gl<=10000?' crit':live&&gl<=30000?' warn':'');
+  $('#gClockBig').className='cbox gclock'+(live&&!paused?' run':'')+(live&&gl<=10000?' crit':live&&gl<=30000?' warn':'');
   const cur=live?curTeam():null;
-  ['L','R'].forEach(x=>{
-    const b=$('#tb'+x),panel=$('#t'+x),on=!!(cur===x&&tEnd);
-    b.style.display=on?'flex':'none';
-    panel.classList.remove('warn','crit');
-    if(on){
-      const rem=tEnd-now;
-      b.firstElementChild.textContent=Math.max(0,Math.ceil(rem/1000));
-      b.style.setProperty('--p',Math.max(0,Math.min(100,rem/TURN_MS*100)));
-      const cls=rem<=5000?'crit':rem<=10000?'warn':'';
-      b.className='tbadge'+(cls?' '+cls:'');
-      if(cls)panel.classList.add(cls);
-    }
-  });
+  const sb=$('#sideBox'),tx=$('#sideTxt'),sec=$('#sideSec'),bar=$('#sideBar');
+  ['L','R'].forEach(x=>$('#t'+x).classList.remove('warn','crit'));
+  sb.classList.remove('warn','crit');
+  if(cur&&tEnd){
+    const rem=Math.max(0,tEnd-now);
+    sb.dataset.side=cur;tx.textContent=cur==='L'?'LEFT':'RIGHT';
+    sec.textContent=Math.ceil(rem/1000)+'s';
+    bar.style.width=Math.min(100,rem/TURN_MS*100)+'%';
+    const cls=rem<=5000?'crit':rem<=10000?'warn':'';
+    if(cls){sb.classList.add(cls);$('#t'+cur).classList.add(cls)}
+  }else{
+    sb.dataset.side='';tx.textContent=(S&&S.over)?'DONE':'\u2013';sec.textContent='';bar.style.width='0';
+  }
 }
 let toastT=null;
 const TREFOIL='<svg class="trefoil" style="vertical-align:-4px;margin-right:8px" viewBox="-50 -50 100 100" width="22" height="22" fill="currentColor" aria-hidden="true"><circle r="8"/><path d="M-23.00,-39.84 A46,46 0 0 1 23.00,-39.84 L6.50,-11.26 A13,13 0 0 0 -6.50,-11.26 Z"/><path d="M46.00,0.00 A46,46 0 0 1 23.00,39.84 L6.50,11.26 A13,13 0 0 0 13.00,0.00 Z"/><path d="M-23.00,39.84 A46,46 0 0 1 -46.00,0.00 L-13.00,0.00 A13,13 0 0 0 -6.50,11.26 Z"/></svg>';

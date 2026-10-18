@@ -42,7 +42,7 @@ A→B end of slide 3 · B→C end of slide 6 · C→D end of slide 10 · D→A e
 - [ ] Open `DR_Lab.html` **from disk** in Edge/Chrome with Wi-Fi **off**. Tabs: Hook, Warm-up, Blackjack all show images.
 - [ ] Projector at 1280×720 or higher: the Blackjack screen fits without scrolling (the Rules box is collapsed).
 - [ ] Keys work: Warm-up `1` `2` `R`; Blackjack `1`–`9` cards, `S` stand, `U` undo, `V` reveal, `N` new game, `L`/`R` first pick.
-- [ ] Blackjack clocks: the big GAME CLOCK (hourglass flips, red dot blinks) sits under the START/Ideal panels; the TURN ring appears only on the playing team (yellow at 10 s, red at 5 s). Game clock turns yellow at 30 s and red at 10 s. `P` pauses both.
+- [ ] Blackjack clocks: two equal boxes under the START/Ideal panels. TIME LEFT = the 3:00 game clock (hourglass flips, red dot blinks; yellow at 30 s, red at 10 s). CURRENT SIDE = LEFT (blue) or RIGHT (orange) with that team's 30 s turn countdown and a draining bar (yellow at 10 s, red at 5 s). `P` pauses both.
 - [ ] Grain visible from the back of the room (Start image at ≈0.12× clearly grainy). If not, tell the class "grain is exaggerated" and zoom the browser (Ctrl +).
 - [ ] PPTX opens in PowerPoint; fonts Cambria/Calibri; speaker notes present; PDF backup on a USB stick.
 - [ ] Slide links: slides 10 and 11 say "Open DR_Lab.html"; keep that window ready in a second tab.

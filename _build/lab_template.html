@@ -115,7 +115,8 @@ button kbd{color:var(--ink)}
 
 /* playing-card styled multipliers + control cluster */
 .statusbar{margin-bottom:6px}
-#cardnote{text-align:center;font-size:17px;color:var(--mute);margin:0 0 12px}
+#cardnote{display:flex;align-items:center;justify-content:center;gap:18px;font-size:17px;color:var(--mute);margin:0 0 10px}
+.scorepill{background:var(--amber);color:#2a1d00;font-weight:800;font-size:18px;border-radius:999px;padding:3px 16px;white-space:nowrap}
 .playbar{display:flex;gap:30px;justify-content:center;align-items:center;margin-top:12px}
 #cards{display:flex;gap:10px;margin:0}
 .card{position:relative;display:flex;align-items:center;justify-content:center;width:82px;height:116px;padding:0;border-radius:12px;background:#fbfcfe;color:#12304a;border:2px solid #cfd9e6;font-size:36px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:transform .12s,box-shadow .12s}
@@ -184,7 +185,7 @@ button kbd{color:var(--ink)}
   </div>
   <div id="bjGame" style="display:none">
     <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div><span class="clock" id="tClock"><small>TURN</small>30</span><span class="clock" id="gClock"><small>GAME</small>3:00</span></div><div id="toast"></div>
-    <div id="cardnote">Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;3 = &times;18 of the start)</div>
+    <div id="cardnote"><span class="scorepill">Score = Quality &times; 2 &minus; Dose</span><span>Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;3 = &times;18 of the start)</span></div>
     <div class="grid3">
       <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:172px;height:172px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>

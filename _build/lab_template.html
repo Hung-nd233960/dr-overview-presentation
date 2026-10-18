@@ -75,7 +75,8 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .bar3 i{flex:1}
 #proceed{display:block;margin:6px auto 0;font-size:24px;padding:10px 40px}
 .proceedhint{text-align:center;color:var(--mute);font-size:14px;margin-top:6px}
-#reveal{display:none}
+#reveal.ready{box-shadow:0 0 0 4px rgba(31,181,168,.35);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 9px rgba(31,181,168,.12)}}
 #revealbox{display:none;padding:8px 6px}
 .rv{display:flex;gap:14px;justify-content:center}
 .rvteam{width:600px;background:var(--panel);border-radius:10px;padding:8px;text-align:center}
@@ -88,6 +89,8 @@ button:disabled{opacity:.35;cursor:not-allowed}
 details{max-width:1100px;margin:6px auto;font-size:15px;color:var(--mute)}
 summary{cursor:pointer;font-size:16px;color:var(--ink)}
 kbd{background:#0a1322;border:1px solid #2c4468;border-radius:4px;padding:0 5px}
+button kbd{color:var(--ink)}
+#reveal:disabled{opacity:.5}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -212,7 +215,7 @@ function newState(){return{round:1,first:null,order:null,pos:0,usedCard:null,ove
   T:{L:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],seeds:[7],stand:false,stopped:false},R:{r:E.R0,D:E.doseOf(E.R0),hist:[E.R0],seeds:[7],stand:false,stopped:false}}}}
 function snap(){stack.push(JSON.stringify(S))}
 function hideReveal(){$('#revealbox').style.display='none';if(typeof rulesOn==='undefined'||!rulesOn)$('#bjGame').style.display='block'}
-function bjNew(){S=newState();stack=[];hideReveal();$('#reveal').style.display='none';bjRender()}
+function bjNew(){S=newState();stack=[];hideReveal();bjRender()}
 function active(t){return !S.T[t].stand&&!S.T[t].stopped}
 function curTeam(){if(S.over||!S.first)return null;return S.order[S.pos]}
 function advance(){
@@ -254,7 +257,7 @@ function bjRender(){
   const cards=$('#cards');cards.innerHTML='';
   E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||(S.pos===1&&S.usedCard===i))?' used':'');b.textContent=l;b.onclick=()=>playCard(i);cards.appendChild(b)});
   $('#standBtn').disabled=!t;$('#coinbar').style.display=S.first?'none':'flex';
-  $('#reveal').style.display=S.over?'':'none';
+  $('#reveal').disabled=!S.over;$('#reveal').classList.toggle('ready',S.over);
 }
 function reveal(){
   if(!S.over)return;

@@ -58,7 +58,7 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .dose{flex:1;height:20px;border-radius:10px;background:#0a1322;overflow:hidden;border:1px solid #2c4468}
 .dose i{display:block;height:100%;width:0;background:var(--green);transition:width .5s,background .3s}
 .roundbig{font-size:17px;color:var(--mute);margin-top:12px;min-height:56px;display:flex;align-items:center;justify-content:center}
-#coinbar{display:none;justify-content:center;align-items:center;gap:14px;margin:16px 0 4px;font-size:21px}
+#coinbar{display:none;justify-content:center;align-items:center;gap:14px;margin:0;font-size:21px;min-height:116px}
 #coinbar button{font-size:19px}
 #cards{display:flex;gap:14px;justify-content:center;margin:0 0 14px}
 #cardnote{text-align:center;font-size:16px;color:var(--mute);margin:10px 0 12px}
@@ -178,6 +178,10 @@ button kbd{color:var(--ink)}
 #dosewarn{font-size:15px;font-weight:600;color:var(--amber);text-align:center;white-space:nowrap}
 .playbar{margin-top:8px}
 .trefoil{vertical-align:-5px;margin-right:6px;flex:none}
+.cbtext{display:flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.25;margin-right:6px}
+.cbtext b{font-size:21px;color:var(--ink)}
+.cbtext span{font-size:16px;color:var(--amber)}
+.cbtext span b{font-size:16px;color:var(--amber)}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -250,8 +254,8 @@ button kbd{color:var(--ink)}
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>
-    <div id="coinbar"><span>Who plays first?</span><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
     <div class="playbar">
+    <div id="coinbar"><div class="cbtext"><b>Who plays first?</b><span>The team going second gets <b>2 turns in a row</b> to compensate.</span></div><button class="sec" id="coinL">Team Left</button><button id="coinF">&#127922; Random <kbd>F</kbd></button><button class="sec" id="coinR">Team Right</button></div>
     <div class="cardcol"><div id="cards"></div>
     <div id="dosewarn"><svg class="trefoil" viewBox="-50 -50 100 100" width="22" height="22" fill="currentColor" aria-hidden="true"><circle r="8"/><path d="M-23.00,-39.84 A46,46 0 0 1 23.00,-39.84 L6.50,-11.26 A13,13 0 0 0 -6.50,-11.26 Z"/><path d="M46.00,0.00 A46,46 0 0 1 23.00,39.84 L6.50,11.26 A13,13 0 0 0 13.00,0.00 Z"/><path d="M-23.00,39.84 A46,46 0 0 1 -46.00,0.00 L-13.00,0.00 A13,13 0 0 0 -6.50,11.26 Z"/></svg> Stronger multiplier = more added dose: each scan adds about 10 &times; its exposure (+3), and dose never goes down.</div></div>
     <div class="ctrls">
@@ -361,7 +365,7 @@ function bjRender(){
   ['L','R'].forEach(x=>{if(S.T[x].stopped&&!S.T[x].stand&&!S.over){}});
   const cards=$('#cards');cards.innerHTML='';
   E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||S.last[other(t)]===i)?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
-  $('#standBtn').disabled=!t;$('#coinbar').style.display=S.first?'none':'flex';
+  $('#standBtn').disabled=!t;$('#coinbar').style.display=S.first?'none':'flex';document.querySelector('.cardcol').style.display=S.first?'':'none';
   $('#reveal').disabled=!S.over;$('#reveal').classList.toggle('ready',S.over);clockSync();
 }
 function reveal(){
@@ -479,6 +483,7 @@ im.onload=()=>{
   baseImg=toCanvas(BASE.map(v=>v*255),N);
   hook(4);warmBuild();bjNew();
   const p=new URLSearchParams(location.search);if(p.get('tab'))showTab(p.get('tab'));
+  if(p.get('skip'))showRules(false);
   const pl=p.get('plays');if(pl&&!p.get('demo')){showRules(false);setFirst('L');pl.split(',').forEach(i=>playCard(+i))}
   const dm=p.get('demo');if(dm){showRules(false);setFirst('R');if(dm>='1')playCard(5);if(dm>='2'){playCard(6);playCard(4);playCard(3)}if(dm>='3'){doStand();doStand();reveal()}}
 };

@@ -292,7 +292,7 @@ button kbd{color:var(--ink)}
         <div class="rule"><b class="n">1</b><span>Both teams start from the <b>same grainy image</b>. The ideal image stays on screen. The start is <b>different every game</b>.</span></div>
         <div class="rule"><b class="n">2</b><span>Each turn your team plays <b>one multiplier card</b>. It multiplies the exposure of your <b>last scan</b>, so cards <b>chain</b>: new image, more dose. Both teams see every image.</span></div>
         <div class="rule"><b class="n">3</b><span><b>Turn order:</b> the first team plays once, the other team then plays <b>twice in a row</b> (its trade for going second), then they alternate: <b style="white-space:nowrap">L R R L R L R L</b> (4 scans each).</span></div>
-        <div class="rule"><b class="n">4</b><span><b>No copying:</b> you cannot play the card your opponent played last. Say <b>STAND</b> when close enough; the other team <b>keeps playing</b>, so standing early gains nothing.</span></div>
+        <div class="rule"><b class="n">4</b><span><b>No copying:</b> you cannot play the card your opponent just played (your 2nd turn in a row is free). Say <b>STAND</b> when close enough; the other team <b>keeps playing</b>, so standing early gains nothing.</span></div>
         <div class="rule"><b class="n">5</b><span>Your <b>last image</b> is your submission, not your best one.</span></div>
         <div class="rule"><b class="n">6</b><span><b>Clocks:</b> 30 s per turn and 3:00 for the whole game. If your turn clock runs out, your team <b>STANDS</b> at once. When the game clock ends, <b>both teams STAND</b>.</span></div>
       </div>
@@ -486,6 +486,8 @@ function hideReveal(){$('#revealbox').style.display='none';if(typeof rulesOn==='
 function bjNew(){randStart();S=newState();stack=[];clocksReset();hideReveal();bjRender()}
 function active(t){return !S.T[t].stand&&!S.T[t].stopped}
 function other(t){return t==='L'?'R':'L'}
+// no-copy applies only to the turn directly after the opponent's move (not to your own consecutive turn)
+function blocked(t,i){const o=other(t);return S.prev===o&&!S.T[o].stand&&S.last[o]===i}
 function teamAt(k){return PATTERN[k]==='F'?S.first:other(S.first)}
 function curTeam(){if(S.over||!S.first)return null;return teamAt(S.i)}
 function advance(){
@@ -500,7 +502,7 @@ let spinning=false;
 function setFirst(t){if(spinning||S.first||S.over)return;snap();gEnd=Date.now()+GLOBAL_MS;S.first=t;S.i=0;advance();bjRender()}
 function playCard(ci){
   const t=curTeam();if(!t||paused)return;
-  if(S.last[other(t)]===ci)return; // no copying: not the card your opponent played last
+  if(blocked(t,ci))return; // no copying: not the card your opponent just played
   snap();const T=S.T[t];
   T.r*=E.CARDS[ci];T.D+=E.doseOf(T.r)+E.RETAKE;T.hist.push(T.r);T.cards.push(E.CARD_LABELS[ci]);T.seeds.push(SEEDg+S.i*10+(t==='L'?1:2));
   S.last[t]=ci;
@@ -526,7 +528,7 @@ function bjRender(){
   $('#roundPill').textContent=S.over?'Game over':'Turn '+Math.min(S.i+1,8)+' / 8';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this with the least dose':'Match this with the least dose');
   ['L','R'].forEach(x=>{if(S.T[x].stopped&&!S.T[x].stand&&!S.over){}});
   const cards=$('#cards');cards.innerHTML='';
-  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+(i%2?' red':'')+((!t||S.last[other(t)]===i)?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
+  E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+(i%2?' red':'')+((!t||blocked(t,i))?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
   $('#standBtn').disabled=!t;$('#coinbar').style.display=S.first?'none':'flex';document.querySelector('.cardcol').style.display=S.first?'':'none';
   $('#reveal').disabled=!S.over;$('#reveal').classList.toggle('ready',S.over);clockSync();
 }

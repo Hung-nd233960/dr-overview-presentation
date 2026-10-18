@@ -50,7 +50,7 @@ A→B end of slide 3 · B→C end of slide 6 · C→D end of slide 10 · D→A e
 ## Activity dry-run (do twice, with a timer)
 
 1. **Warm-up** (1:00): C asks lowest, D reveals; C asks highest, D reveals; punchline.
-2. **Blackjack** (2:30): split room, coin flip, 4 rounds ≈ 25 s each, Reveal, punchline. Practise the "stand" and the "undo" key. Expected best route: ×3 then ×3 (score 178.4).
+2. **Blackjack** (2:30): split room, Random picks the first team, 4 rounds ≈ 25 s each, Reveal, punchline. Practise the "stand" and the "undo" key. Expected best route: ×3 then ×3 (score 178.4).
 3. Check the debrief on slide 12 follows within 10 s.
 
 ## Backup plan

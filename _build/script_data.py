@@ -171,7 +171,7 @@ HANDOVERS = [
 ]
 
 RUNSHEET_BJ = [
- "D splits the room into Team Left and Team Right (each picks a captain). D reads the 4 rules (about 20 s). B flips a coin: `Left first` / `Right first`.",
+ "D splits the room into Team Left and Team Right (each picks a captain). D reads the 4 rules (about 20 s). B presses **Random** (a 3\u20134 second spinner decides who picks first) or clicks a team.",
  "Each round: the team on turn discusses for at most 10 s; the captain calls a card or “stand”. A clicks it (keys 1–8 = cards in order, S = stand). The new image appears for both teams.",
  "B enforces “no copy” (the first team’s card is greyed out for the second team), alternates the first pick each round, and announces the dose-bar colour (green → amber → red).",
  "If one team stands, the other keeps playing its remaining rounds. A mistake? Press U (undo). C collects Team Left’s hand-vote on cards when the captain cannot decide.",

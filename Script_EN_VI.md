@@ -202,7 +202,7 @@ Target 17:00 including two activities. Speakers: A, B, C, D (replace with names)
 
 ## Run sheet — Activity 2: X-ray Blackjack
 
-1. D splits the room into Team Left and Team Right (each picks a captain). D reads the 4 rules (about 20 s). B flips a coin: `Left first` / `Right first`.
+1. D splits the room into Team Left and Team Right (each picks a captain). D reads the 4 rules (about 20 s). B presses **Random** (a 3–4 second spinner decides who picks first) or clicks a team.
 2. Each round: the team on turn discusses for at most 10 s; the captain calls a card or “stand”. A clicks it (keys 1–8 = cards in order, S = stand). The new image appears for both teams.
 3. B enforces “no copy” (the first team’s card is greyed out for the second team), alternates the first pick each round, and announces the dose-bar colour (green → amber → red).
 4. If one team stands, the other keeps playing its remaining rounds. A mistake? Press U (undo). C collects Team Left’s hand-vote on cards when the captain cannot decide.

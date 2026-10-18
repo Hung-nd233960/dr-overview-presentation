@@ -215,6 +215,18 @@ button kbd{color:var(--ink)}
 #tR h2{color:var(--rc)}
 #tL.act:not(.warn):not(.crit){border-color:var(--lc);box-shadow:0 0 0 4px rgba(74,163,255,.25)}
 #tR.act:not(.warn):not(.crit){border-color:var(--rc);box-shadow:0 0 0 4px rgba(255,138,61,.25)}
+
+/* pulsing highlight on the team whose turn it is */
+@keyframes pulseL{0%,100%{box-shadow:0 0 0 3px rgba(74,163,255,.16)}50%{box-shadow:0 0 0 9px rgba(74,163,255,.40)}}
+@keyframes pulseR{0%,100%{box-shadow:0 0 0 3px rgba(255,138,61,.16)}50%{box-shadow:0 0 0 9px rgba(255,138,61,.40)}}
+@keyframes pulseW{0%,100%{box-shadow:0 0 0 3px rgba(242,177,52,.20)}50%{box-shadow:0 0 0 10px rgba(242,177,52,.50)}}
+@keyframes pulseC{0%,100%{box-shadow:0 0 0 3px rgba(226,87,76,.25)}50%{box-shadow:0 0 0 11px rgba(226,87,76,.60)}}
+#tL.act:not(.warn):not(.crit){animation:pulseL 1.8s ease-in-out infinite}
+#tR.act:not(.warn):not(.crit){animation:pulseR 1.8s ease-in-out infinite}
+.team.act.warn{animation:pulseW 1s ease-in-out infinite}
+.team.act.crit{animation:pulseC .5s ease-in-out infinite}
+.team.win{animation:pulseW 1s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){#tL.act,#tR.act,.team.win{animation:none!important}}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>

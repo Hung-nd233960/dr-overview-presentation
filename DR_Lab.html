@@ -139,6 +139,40 @@ button kbd{color:var(--ink)}
 .hi span{font-size:13px}
 .roundbig{min-height:0;margin-top:10px;font-size:15px}
 .dosewrap{margin-top:8px}
+
+/* clocks: big game clock (centre) + turn ring on the playing team */
+.grid3{position:relative}
+.team{position:relative}
+.team.act h2::after{content:''}
+.gclock{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:#0a1322;border:3px solid #2c4468;border-radius:16px;padding:6px 26px 6px 18px;z-index:2;color:var(--teal);box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.gclock small{display:block;font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--mute)}
+.gclock b{display:block;font-size:46px;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.gclock .dot{width:14px;height:14px;border-radius:50%;background:#555;flex:none}
+.gclock.run .dot{background:var(--red);animation:tick 1s steps(1) infinite}
+@keyframes tick{50%{opacity:.15}}
+.gclock .hg{flex:none}
+.gclock.run .hg{animation:flip 4s ease-in-out infinite}
+@keyframes flip{0%,40%{transform:rotate(0)}50%,90%{transform:rotate(180deg)}100%{transform:rotate(360deg)}}
+.gclock.warn{border-color:var(--amber);color:var(--amber)}
+.gclock.warn b{color:var(--amber)}
+.gclock.crit{border-color:var(--red);color:var(--red)}
+.gclock.crit b{color:var(--red);animation:blink .6s infinite}
+.tbadge{--p:100;--c:var(--teal);position:absolute;top:4px;right:8px;width:46px;height:46px;border-radius:50%;display:none;align-items:center;justify-content:center;background:conic-gradient(var(--c) calc(var(--p)*1%),#0a1322 0);z-index:2}
+.tbadge::before{content:'';position:absolute;inset:5px;border-radius:50%;background:var(--panel)}
+.tbadge span{position:relative;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
+.tbadge.warn{--c:var(--amber)}
+.tbadge.warn span{color:var(--amber)}
+.tbadge.crit{--c:var(--red)}
+.tbadge.crit span{color:var(--red);animation:blink .5s infinite}
+.team.act.warn{border-color:var(--amber);box-shadow:0 0 0 4px rgba(242,177,52,.3)}
+.team.act.crit{border-color:var(--red);box-shadow:0 0 0 5px rgba(226,87,76,.4)}
+
+/* game clock: slightly smaller so it sits clear of the START / IDEAL panels */
+.gclock{gap:12px;padding:3px 20px 3px 14px;bottom:2px;border-width:2px;border-radius:14px}
+.gclock b{font-size:36px}
+.gclock small{font-size:11px}
+.gclock .hg{width:32px;height:32px}
+.gclock .dot{width:12px;height:12px}
 </style></head><body>
 <header><h1>DR Lab</h1>
 <button class="tab on" data-t="hook">1 Hook</button>
@@ -196,17 +230,18 @@ button kbd{color:var(--ink)}
     <div class="proceedhint">or press <kbd>Enter</kbd></div>
   </div>
   <div id="bjGame" style="display:none">
-    <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div><span class="clock" id="tClock"><small>TURN</small>30</span><span class="clock" id="gClock"><small>GAME</small>3:00</span></div><div id="toast"></div>
+    <div class="statusbar"><span class="pill" id="roundPill">Round 1 / 4</span><div class="status" id="bjStatus"></div></div><div id="toast"></div>
     <div id="cardnote"><span class="scorepill">Score = Quality &times; 2 &minus; Dose</span><span>Each card multiplies your <b>last</b> scan, so cards chain (&times;6 then &times;1.5 = &times;9 of the start)</span></div>
     <div class="grid3">
-      <div class="team" id="tL"><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:268px;height:268px"></canvas>
+      <div id="gClockBig" class="gclock"><span class="dot"></span><svg class="hg" viewBox="0 0 24 24" width="42" height="42"><path d="M6 2h12v4l-5 6 5 6v4H6v-4l5-6-5-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 5h7l-3.5 4.2z" fill="currentColor"/><path d="M8 19h8l-4-4.5z" fill="currentColor"/></svg><div><small>GAME CLOCK</small><b id="gTime">3:00</b></div></div>
+      <div class="team" id="tL"><div class="tbadge" id="tbL"><span>30</span></div><h2>TEAM LEFT</h2><canvas id="cL" width="768" height="768" style="width:268px;height:268px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hL"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dL"></i></div></div></div>
       <div class="ideal" id="tS" style="display:none"><h2 style="color:var(--mute)">START</h2><canvas id="cS" width="768" height="768" style="width:268px;height:268px"></canvas>
         <div class="roundbig">Where both teams began</div></div>
       <div class="ideal"><h2>IDEAL</h2><canvas id="cI" width="768" height="768" style="width:268px;height:268px"></canvas>
-        <div class="roundbig" id="roundInfo">Match this image with as little dose as possible</div></div>
-      <div class="team" id="tR"><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:268px;height:268px"></canvas>
+        <div class="roundbig" id="roundInfo">Match this with the least dose</div></div>
+      <div class="team" id="tR"><div class="tbadge" id="tbR"><span>30</span></div><h2>TEAM RIGHT</h2><canvas id="cR" width="768" height="768" style="width:268px;height:268px"></canvas>
         <div class="row2"><span class="lbl">History</span><div class="hist" id="hR"></div></div>
         <div class="dosewrap"><span class="lbl">Dose</span><div class="dose"><i id="dR"></i></div></div></div>
     </div>
@@ -403,7 +438,7 @@ function bjRender(){
     if(S.T[o].stand||S.T[o].stopped)msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' keeps playing ('+nm(o)+(S.T[o].stand?' stood':' hit the dose limit')+')';
     else msg='Round '+S.round+' of 4 \u2014 '+nm(t)+' to play'+(S.pos===1?' (second pick)':' (first pick)')}
   $('#bjStatus').textContent=paused?'\u23F8 Paused \u2014 press P to resume':msg;
-  $('#roundPill').textContent=S.over?'Game over':'Round '+Math.min(S.round,4)+' / 4';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this image with as little dose as possible':'Match this image with as little dose as possible');
+  $('#roundPill').textContent=S.over?'Game over':'Round '+Math.min(S.round,4)+' / 4';$('#roundInfo').textContent=S.over?'Press Reveal to see the quality scores':(S.first?'Match this with the least dose':'Match this with the least dose');
   ['L','R'].forEach(x=>{if(S.T[x].stopped&&!S.T[x].stand&&!S.over){}});
   const cards=$('#cards');cards.innerHTML='';
   E.CARD_LABELS.forEach((l,i)=>{const b=document.createElement('button');b.className='card'+((!t||(S.pos===1&&S.usedCard===i))?' used':'');b.textContent=l;b.setAttribute('data-l',l);b.onclick=()=>playCard(i);cards.appendChild(b)});
@@ -457,13 +492,24 @@ function clockSync(){
 function fmt2(ms){const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
 function clockDraw(){
   const now=paused?pAt:Date.now();
-  const g=$('#gClock'),tc=$('#tClock');
-  const live=S&&S.first&&!S.over&&gEnd;
-  g.innerHTML='<small>GAME</small>'+(gEnd?fmt2(gEnd-now):'3:00');
-  tc.innerHTML='<small>TURN</small>'+(live&&tEnd?Math.max(0,Math.ceil((tEnd-now)/1000)):'30');
-  const gl=live?gEnd-now:1e9,tl=live&&tEnd?tEnd-now:1e9;
-  g.className='clock'+(gl<=10000?' crit':gl<=30000?' warn':'');
-  tc.className='clock'+(tl<=5000?' crit':tl<=10000?' warn':'');
+  const live=!!(S&&S.first&&!S.over&&gEnd);
+  const gl=live?gEnd-now:(gEnd?Math.max(0,gEnd-now):GLOBAL_MS);
+  $('#gTime').textContent=fmt2(gEnd?gEnd-now:GLOBAL_MS);
+  $('#gClockBig').className='gclock'+(live&&!paused?' run':'')+(live&&gl<=10000?' crit':live&&gl<=30000?' warn':'');
+  const cur=live?curTeam():null;
+  ['L','R'].forEach(x=>{
+    const b=$('#tb'+x),panel=$('#t'+x),on=!!(cur===x&&tEnd);
+    b.style.display=on?'flex':'none';
+    panel.classList.remove('warn','crit');
+    if(on){
+      const rem=tEnd-now;
+      b.firstElementChild.textContent=Math.max(0,Math.ceil(rem/1000));
+      b.style.setProperty('--p',Math.max(0,Math.min(100,rem/TURN_MS*100)));
+      const cls=rem<=5000?'crit':rem<=10000?'warn':'';
+      b.className='tbadge'+(cls?' '+cls:'');
+      if(cls)panel.classList.add(cls);
+    }
+  });
 }
 let toastT=null;
 function toast(msg){const e=$('#toast');e.textContent=msg;e.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>e.style.display='none',3500)}
